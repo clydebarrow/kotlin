@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.common.serialization.DescriptorTable
 import org.jetbrains.kotlin.backend.common.serialization.metadata.DynamicTypeDeserializer
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.CommonConfigurationKeys.MPP_KLIBS
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
@@ -77,6 +78,9 @@ val emptyLoggingContext = object : LoggingContext {
 
 private val CompilerConfiguration.metadataVersion
     get() = get(CommonConfigurationKeys.METADATA_VERSION) as? JsKlibMetadataVersion ?: JsKlibMetadataVersion.INSTANCE
+
+private val CompilerConfiguration.mppKlibs: Boolean
+    get() = get(CommonConfigurationKeys.MPP_KLIBS) ?: false
 
 class KotlinFileSerializedData(val metadata: ByteArray, val irData: SerializedIrFile)
 
@@ -348,7 +352,7 @@ fun serializeModuleIntoKlib(
 
     val descriptorTable = DescriptorTable()
     val serializedIr =
-        JsIrModuleSerializer(emptyLoggingContext, moduleFragment.irBuiltins, descriptorTable).serializedIrModule(moduleFragment)
+        JsIrModuleSerializer(emptyLoggingContext, moduleFragment.irBuiltins, descriptorTable, skipExpects = !configuration.mppKlibs).serializedIrModule(moduleFragment)
 
     val moduleDescriptor = moduleFragment.descriptor
 
@@ -359,7 +363,9 @@ fun serializeModuleIntoKlib(
         languageVersionSettings,
         metadataVersion,
         moduleDescriptor,
-        descriptorTable)
+        descriptorTable,
+        skipExpects = !configuration.mppKlibs
+    )
 
     fun serializeScope(fqName: FqName, memberScope: Collection<DeclarationDescriptor>): ByteArray {
         return metadataSerializer.serializePackageFragment(

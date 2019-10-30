@@ -12,5 +12,6 @@ import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
 class JsIrFileSerializer(
     logger: LoggingContext,
     declarationTable: DeclarationTable,
+    skipExpects: Boolean,
     bodiesOnlyForInlines: Boolean = false
-) : IrFileSerializer(logger, declarationTable, bodiesOnlyForInlines)
+) : IrFileSerializer(logger, declarationTable, bodiesOnlyForInlines = bodiesOnlyForInlines, skipExpects = skipExpects)
