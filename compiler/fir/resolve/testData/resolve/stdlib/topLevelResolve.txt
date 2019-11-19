@@ -2,7 +2,7 @@ FILE: topLevelResolve.kt
     public final fun testPlus(): R|kotlin/Unit| {
         lval x: R|kotlin/Int| = Int(1).R|kotlin/Int.plus|(Int(2))
         lval y: R|kotlin/Double| = Double(3.0).R|kotlin/Double.plus|(Double(4.0))
-        lval z: R|kotlin/Double| = Int(5).R|kotlin/Int.plus|(Double(6.0))
+        lval z: R|ILT: 0| = Double(5).R|kotlin/Double.plus|(Double(6.0))
         lval w: R|kotlin/Double| = Double(7.0).R|kotlin/Double.plus|(Int(8))
         lval c: R|kotlin/Char| = Char(a).R|kotlin/Char.plus|(Int(1))
         lval s: R|kotlin/String| = String(.).R|kotlin/String.plus|(String(..))

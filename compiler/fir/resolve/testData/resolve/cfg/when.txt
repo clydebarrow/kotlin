@@ -7,7 +7,7 @@ FILE: when.kt
             ==(R|<local>/x|.R|kotlin/Int.rem|(Int(2)), Int(0)) ->  {
                 Int(20)
             }
-            ==(Int(1).R|kotlin/Int.minus|(Int(1)), Int(0)) ->  {
+            ==(Int(1).R|<local>/minus|(Int(1)), Int(0)) ->  {
                 ^test_1 Unit
             }
             else ->  {

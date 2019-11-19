@@ -76,6 +76,10 @@ class FirFieldImpl(
         return this
     }
 
+    override fun <D> transformInitializer(transformer: FirTransformer<D>, data: D): FirFieldImpl {
+        return this
+    }
+
     override fun <D> transformGetter(transformer: FirTransformer<D>, data: D): FirFieldImpl {
         return this
     }
@@ -97,5 +101,9 @@ class FirFieldImpl(
 
     override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
         resolvePhase = newResolvePhase
+    }
+
+    override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef) {
+        returnTypeRef = newReturnTypeRef
     }
 }

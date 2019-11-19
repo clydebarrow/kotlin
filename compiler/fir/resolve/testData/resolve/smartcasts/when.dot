@@ -606,7 +606,7 @@ digraph when_kt {
       subgraph cluster_49 {
         color=blue
         227 [label="Enter when branch condition "];
-        228 [label="Const: Int(1)"];
+        228 [label="Const: IntegerLiteral(1)"];
         229 [label="Operator =="];
         230 [label="Exit when branch condition"];
       }

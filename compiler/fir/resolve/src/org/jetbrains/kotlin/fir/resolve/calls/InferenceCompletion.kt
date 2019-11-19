@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.types.ConeIntegerLiteralType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
@@ -30,7 +31,8 @@ fun Candidate.computeCompletionMode(
     if (expectedType != null) return KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode.FULL
 
     // This is questionable as null return type can be only for error call
-    if (currentReturnType == null) return KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode.PARTIAL
+    if (currentReturnType == null || currentReturnType is ConeIntegerLiteralType)
+        return KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode.PARTIAL
 
     return when {
         // Consider call foo(bar(x)), if return type of bar is a proper one, then we can complete resolve for bar => full completion mode

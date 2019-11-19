@@ -916,10 +916,11 @@ class Fir2IrVisitor(
 
     override fun <T> visitConstExpression(constExpression: FirConstExpression<T>, data: Any?): IrElement {
         return constExpression.convertWithOffsets { startOffset, endOffset ->
+            @Suppress("UNCHECKED_CAST")
             IrConstImpl(
                 startOffset, endOffset,
                 constExpression.typeRef.toIrType(session, declarationStorage),
-                constExpression.kind, constExpression.value
+                constExpression.kind.toIrConstKind() as IrConstKind<T>, constExpression.value
             )
         }
     }

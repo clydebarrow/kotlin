@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.UniversalConeInferenceContext
 import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -45,12 +46,12 @@ class TypeParameterBasedTypeVariable(val typeParameterSymbol: FirTypeParameterSy
     ConeTypeVariable(typeParameterSymbol.name.identifier)
 
 class InferenceComponents(
-    val ctx: TypeSystemInferenceExtensionContextDelegate,
+    val ctx: UniversalConeInferenceContext,
     val session: FirSession,
     val returnTypeCalculator: ReturnTypeCalculator,
     val scopeSession: ScopeSession
 ) {
-    private val approximator = object : AbstractTypeApproximator(ctx) {
+    val approximator = object : AbstractTypeApproximator(ctx) {
         override fun createErrorType(message: String): SimpleTypeMarker {
             return ConeClassErrorType(message)
         }

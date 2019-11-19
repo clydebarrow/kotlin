@@ -1,0 +1,43 @@
+FILE: operatorsOverLiterals.kt
+    public final fun foo(x: R|kotlin/Int|): R|kotlin/Unit| {
+    }
+    public final fun foo(x: R|kotlin/Byte|): R|kotlin/Unit| {
+    }
+    public final fun test_0(): R|kotlin/Unit| {
+        R|/foo|(Int(1))
+    }
+    public final fun test_1(): R|kotlin/Unit| {
+        lval x1: R|kotlin/Int| = Int(1).R|kotlin/Int.plus|(Int(1))
+        lval x2: R|kotlin/Int| = Int(1).R|kotlin/Int.plus|(Int(1))
+        Int(1).R|<local>/plus|(Int(1))
+        Int(127).R|<local>/plus|(Int(1))
+        lval x3: R|kotlin/Int| = Int(2000000000).R|kotlin/Int.times|(Int(4))
+    }
+    public final fun test_2(n: R|kotlin/Int|): R|kotlin/Unit| {
+        lval x: R|ILT: 0| = Int(1).R|kotlin/Int.plus|(R|<local>/n|)
+        lval y: R|kotlin/Int| = R|<local>/n|.R|kotlin/Int.plus|(Int(1))
+    }
+    public final fun R|kotlin/Int|.bar(): R|kotlin/Int| {
+    }
+    public final fun R|kotlin/Int|.baz(): R|kotlin/Int|
+    public final fun R|kotlin/Byte|.baz(): R|kotlin/Byte| {
+    }
+    public final fun test_3(): R|kotlin/Unit| {
+        lval x: R|kotlin/Int| = Int(1).R|/bar|()
+        lval y: R|kotlin/Int| = Int(1).R|/baz|()
+    }
+    public final fun takeByte(b: R|kotlin/Byte|): R|kotlin/Unit| {
+    }
+    public final fun test_4(): R|kotlin/Unit| {
+        <Inapplicable(INAPPLICABLE): [/takeByte]>#(Int(127).R|<local>/plus|(Int(1)))
+        <Inapplicable(INAPPLICABLE): [/takeByte]>#(R|kotlin/run|<R|kotlin/Int|>(<L> = run@fun <anonymous>(): R|kotlin/Int| <kind=EXACTLY_ONCE>  {
+            Int(127).R|<local>/plus|(Int(1))
+        }
+        ))
+        R|/takeByte|(Byte(1).R|<local>/plus|(Byte(1)))
+        R|/takeByte|(R|kotlin/run|<R|kotlin/Byte|>(<L> = run@fun <anonymous>(): R|kotlin/Byte| <kind=EXACTLY_ONCE>  {
+            Byte(1).R|<local>/plus|(Byte(1))
+        }
+        ))
+        Int(1).R|<local>/plus|(Int(1))
+    }

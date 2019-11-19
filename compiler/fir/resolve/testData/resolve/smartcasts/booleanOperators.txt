@@ -43,7 +43,7 @@ FILE: booleanOperators.kt
     }
     public final fun test_4(x: R|kotlin/Any|): R|kotlin/Unit| {
         when () {
-            (R|<local>/x| !is R|kotlin/String|) || ==(R|<local>/x|.R|kotlin/String.length|, Int(0)) ->  {
+            (R|<local>/x| !is R|kotlin/String|) || ==(R|<local>/x|.R|kotlin/String.length|, IntegerLiteral(0)) ->  {
                 R|<local>/x|.<Unresolved name: length>#
             }
         }

@@ -1,18 +1,9 @@
 // !LANGUAGE: +NewInference
 // !DIAGNOSTICS: -UNUSED_PARAMETER
-// !USE_EXPERIMENTAL: kotlin.Experimental
 
-import kotlin.experimental.ExperimentalTypeInference
+fun foo(x: Int) {}
+fun foo(x: Byte) {}
 
-interface ProducerScope<E> {
-    fun yield(e: E)
+fun test_0() {
+    foo(1)
 }
-
-@UseExperimental(ExperimentalTypeInference::class)
-fun <E> produce(@BuilderInference block: ProducerScope<E>.() -> Unit): ProducerScope<E> = TODO()
-
-fun <K> filter(e: K, predicate: (K) -> Boolean) =
-    produce {
-        predicate(e)
-        yield(42)
-    }

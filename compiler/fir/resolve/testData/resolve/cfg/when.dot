@@ -32,7 +32,7 @@ digraph when_kt {
         14 [label="Enter when branch condition "];
         15 [label="Const: Int(1)"];
         16 [label="Const: Int(1)"];
-        17 [label="Function call: Int(1).R|kotlin/Int.minus|(Int(1))"];
+        17 [label="Function call: Int(1).R|<local>/minus|(Int(1))"];
         18 [label="Const: Int(0)"];
         19 [label="Operator =="];
         20 [label="Exit when branch condition"];

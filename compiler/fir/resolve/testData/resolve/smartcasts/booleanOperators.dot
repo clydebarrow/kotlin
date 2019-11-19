@@ -230,7 +230,7 @@ digraph booleanOperators_kt {
           81 [label="Enter right part of ||"];
           82 [label="Access variable R|<local>/x|"];
           83 [label="Access variable R|kotlin/String.length|"];
-          84 [label="Const: Int(0)"];
+          84 [label="Const: IntegerLiteral(0)"];
           85 [label="Operator =="];
           86 [label="Exit ||"];
         }

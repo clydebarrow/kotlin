@@ -46,6 +46,8 @@ interface FirModifiableVariable<F : FirVariable<F>>  : FirVariable<F>, FirAbstra
 
     override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirModifiableVariable<F>
 
+    override fun <D> transformInitializer(transformer: FirTransformer<D>, data: D): FirModifiableVariable<F>
+
     override fun <D> transformGetter(transformer: FirTransformer<D>, data: D): FirModifiableVariable<F>
 
     override fun <D> transformSetter(transformer: FirTransformer<D>, data: D): FirModifiableVariable<F>
@@ -53,4 +55,6 @@ interface FirModifiableVariable<F : FirVariable<F>>  : FirVariable<F>, FirAbstra
     override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirModifiableVariable<F>
 
     override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
+
+    override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef)
 }

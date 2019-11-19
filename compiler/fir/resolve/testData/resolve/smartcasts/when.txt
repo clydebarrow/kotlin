@@ -101,7 +101,7 @@ FILE: when.kt
     }
     public final fun test_4(x: R|kotlin/Any|): R|kotlin/Unit| {
         when ((R|<local>/x| as R|kotlin/Int|)) {
-            ==($subj$, Int(1)) ->  {
+            ==($subj$, IntegerLiteral(1)) ->  {
                 R|<local>/x|.R|kotlin/Int.inc|()
             }
         }
