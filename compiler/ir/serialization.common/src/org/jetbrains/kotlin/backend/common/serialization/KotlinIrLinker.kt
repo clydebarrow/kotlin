@@ -211,10 +211,6 @@ abstract class KotlinIrLinker(
                 return String(readString(moduleDescriptor, fileIndex, index))
             }
 
-            private fun loadExpectActuals() {
-                ProtoExpectActualTable.parseFrom(readExpectActualTable(moduleDescriptor))
-            }
-
             private fun referenceDeserializedSymbol(
                 proto: ProtoSymbolData,
                 descriptor: DeclarationDescriptor?

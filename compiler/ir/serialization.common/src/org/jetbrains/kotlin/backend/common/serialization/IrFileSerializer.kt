@@ -30,6 +30,8 @@ import org.jetbrains.kotlin.library.impl.IrMemoryArrayWriter
 import org.jetbrains.kotlin.library.impl.IrMemoryDeclarationWriter
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
 import org.jetbrains.kotlin.resolve.multiplatform.findExpects
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.backend.common.serialization.proto.ClassKind as ProtoClassKind
@@ -256,19 +258,34 @@ open class IrFileSerializer(
     }
 
     // TODO: Do that when we know how to match actual typealias right hand side with its expects
-    /*
-    fun IrElement.recordActuals() {
+
+    fun IrElement.recordActuals(inModule: ModuleDescriptor) {
         this.acceptVoid(object : IrElementVisitorVoid {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }
             override fun visitDeclaration(declaration: IrDeclaration) {
-                trackExpectsAndActuals(declaration)
+                //trackExpectsAndActuals(declaration)
+                println("INSIDE ${declaration.descriptor}: ")
+                if (declaration is IrFunction || declaration is IrClass || declaration is IrProperty || declaration is IrEnumEntry) {
+
+                    declaration.descriptor.findActuals(inModule).forEach {
+                        println("expect ${declaration.descriptor} -> actual: $it")
+                    }
+                }
                 super.visitDeclaration(declaration)
             }
         })
     }
-    */
+
+    fun DeclarationDescriptor.findActuals(inModule: ModuleDescriptor = this.module): List<MemberDescriptor> {
+        println("Searching actuals for expect $this in module ${inModule.name}")
+        return ExpectedActualResolver.findActualForExpected(
+                (this as MemberDescriptor),
+                inModule,
+                { true }
+        )?.get(ExpectedActualResolver.Compatibility.Compatible).orEmpty()
+    }
 
     private fun findExpectsForActuals(declaration: IrDeclaration) {
         if (declaration.descriptor !is MemberDescriptor) return
@@ -277,9 +294,10 @@ open class IrFileSerializer(
         val descriptor = declaration.symbol.descriptor
 
         if (declaration is IrTypeAlias && declaration.isActual) {
-            error("Linking actual type aliases is not supported yet: ${declaration.descriptor}")
-            //declaration.expandedType.classOrNull?.owner?.recordActuals()
-            //    ?: error("Unexpected right hand side of an actual typealias ${declaration.descriptor}")
+
+            declaration.descriptor.findExpects().forEach {
+                expectDescriptorToSymbol[it]?.owner?.recordActuals(declaration./*expandedType.classOrNull?.owner?.*/descriptor?.module ?: error("Unexpected right hand side of an actual typealias ${declaration.descriptor}"))
+            }
         }
 
         val expects: List<MemberDescriptor> = if (descriptor is ClassConstructorDescriptor && descriptor.isPrimary) {
