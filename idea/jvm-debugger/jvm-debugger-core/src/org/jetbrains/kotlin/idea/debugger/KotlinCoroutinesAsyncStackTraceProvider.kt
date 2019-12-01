@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.idea.debugger
 
+import com.intellij.debugger.engine.DebugProcessImpl
 import com.intellij.debugger.engine.JavaStackFrame
+import com.intellij.debugger.engine.SuspendContext
 import com.intellij.debugger.engine.SuspendContextImpl
 import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
 import com.intellij.debugger.jdi.StackFrameProxyImpl
@@ -23,7 +25,7 @@ class KotlinCoroutinesAsyncStackTraceProvider : KotlinCoroutinesAsyncStackTraceP
         return hopelessAware { getAsyncStackTraceSafe(stackFrame.stackFrameProxy, suspendContext) }
     }
 
-    fun getAsyncStackTraceSafe(frameProxy: StackFrameProxyImpl, suspendContext: SuspendContextImpl): List<StackFrameItem>? {
+    fun getAsyncStackTraceSafe(frameProxy: StackFrameProxyImpl, suspendContext: SuspendContext): List<StackFrameItem>? {
         val location = frameProxy.location()
         if (!location.isInKotlinSources()) {
             return null
@@ -32,7 +34,7 @@ class KotlinCoroutinesAsyncStackTraceProvider : KotlinCoroutinesAsyncStackTraceP
         val method = location.safeMethod() ?: return null
         val threadReference = frameProxy.threadProxy().threadReference
 
-        if (threadReference == null || !threadReference.isSuspended || !suspendContext.debugProcess.canRunEvaluation) {
+        if (threadReference == null || !threadReference.isSuspended || !(suspendContext.debugProcess as DebugProcessImpl).canRunEvaluation) {
             return null
         }
 
@@ -48,10 +50,10 @@ class KotlinCoroutinesAsyncStackTraceProvider : KotlinCoroutinesAsyncStackTraceP
     private fun findDebugMetadata(context: ExecutionContext): ClassType? = context.findClassSafe(DEBUG_METADATA_KT)
 
     private fun createExecutionContext(
-        suspendContext: SuspendContextImpl,
+        suspendContext: SuspendContext,
         frameProxy: StackFrameProxyImpl
     ): ExecutionContext {
-        val evaluationContext = EvaluationContextImpl(suspendContext, frameProxy)
+        val evaluationContext = EvaluationContextImpl(suspendContext as SuspendContextImpl, frameProxy)
         return ExecutionContext(evaluationContext, frameProxy)
     }
 }

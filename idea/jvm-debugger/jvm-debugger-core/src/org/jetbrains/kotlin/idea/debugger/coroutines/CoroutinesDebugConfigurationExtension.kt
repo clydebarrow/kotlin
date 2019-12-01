@@ -15,7 +15,6 @@ import com.intellij.execution.configurations.RunnerSettings
  */
 @Suppress("IncompatibleAPI")
 class CoroutinesDebugConfigurationExtension : RunConfigurationExtension() {
-    private val log by logger
 
     override fun isApplicableFor(configuration: RunConfigurationBase<*>) = coroutineDebuggerEnabled()
 
@@ -25,20 +24,7 @@ class CoroutinesDebugConfigurationExtension : RunConfigurationExtension() {
         runnerSettings: RunnerSettings?
     ) {
         if (runnerSettings is DebuggingRunnerData && configuration is RunConfigurationBase<*>) {
-            val configurationName = configuration.type.id
-            try {
-                if (!gradleConfiguration(configurationName)) { // gradle test logic in KotlinGradleCoroutineDebugProjectResolver
-                    val kotlinxCoroutinesClassPathLib = params?.classPath?.pathList?.first { it.contains("kotlinx-coroutines-debug") }
-                    initializeCoroutineAgent(params!!, kotlinxCoroutinesClassPathLib)
-                }
-                configuration.project.coroutineConnectionListener.configurationStarting(runnerSettings, configuration)
-            } catch (e: NoSuchElementException) {
-                log.warn("'kotlinx-coroutines-debug' not found in classpath. Coroutine debugger disabled.")
-            }
+            configuration.project.coroutineConnectionListener.configurationStarting(configuration, params, runnerSettings)
         }
     }
-
-    // @TODO if that can be improved?
-    fun gradleConfiguration(configurationName: String) =
-        "GradleRunConfiguration".equals(configurationName) || "KotlinGradleRunConfiguration".equals(configurationName)
 }

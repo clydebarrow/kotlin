@@ -14,6 +14,7 @@ import org.jetbrains.idea.maven.aether.ArtifactKind
 import org.jetbrains.jps.model.library.JpsMavenRepositoryLibraryDescriptor
 import org.jetbrains.kotlin.idea.debugger.coroutines.CoroutineState
 import org.jetbrains.kotlin.idea.debugger.coroutines.CoroutinesDebugProbesProxy
+import org.jetbrains.kotlin.idea.debugger.coroutines.coroutineProbeProxy
 import org.jetbrains.kotlin.idea.debugger.evaluate.ExecutionContext
 import org.jetbrains.kotlin.idea.debugger.test.preference.DebuggerPreferences
 
@@ -23,36 +24,32 @@ abstract class AbstractCoroutineDumpTest : KotlinDescriptorTestCaseWithStepping(
     override fun doMultiFileTest(files: TestFiles, preferences: DebuggerPreferences) {
 
         doOnBreakpoint {
-            val evalContext = EvaluationContextImpl(this, frameProxy)
-            val execContext = ExecutionContext(evalContext, frameProxy ?: return@doOnBreakpoint)
-            val either = CoroutinesDebugProbesProxy.dumpCoroutines(execContext)
+            val infoCache = this.coroutineProbeProxy.dumpCoroutines()
             try {
-                if (either.isRight)
+                if (infoCache.isOk())
                     try {
-                        val states = either.get()
+                        val states = infoCache.cache
                         print(stringDump(states), ProcessOutputTypes.SYSTEM)
                     } catch (ignored: Throwable) {
                     }
                 else
-                    throw AssertionError("Dump failed", either.left)
+                    throw AssertionError("Dump failed")
             } finally {
                 resume(this)
             }
         }
 
         doOnBreakpoint {
-            val evalContext = EvaluationContextImpl(this, frameProxy)
-            val execContext = ExecutionContext(evalContext, frameProxy ?: return@doOnBreakpoint)
-            val either = CoroutinesDebugProbesProxy.dumpCoroutines(execContext)
+            val infoCache = this.coroutineProbeProxy.dumpCoroutines()
             try {
-                if (either.isRight)
+                if (infoCache.isOk())
                     try {
-                        val states = either.get()
+                        val states = infoCache.cache
                         print(stringDump(states), ProcessOutputTypes.SYSTEM)
                     } catch (ignored: Throwable) {
                     }
                 else
-                    throw AssertionError("Dump failed", either.left)
+                    throw AssertionError("Dump failed")
             } finally {
                 resume(this)
             }

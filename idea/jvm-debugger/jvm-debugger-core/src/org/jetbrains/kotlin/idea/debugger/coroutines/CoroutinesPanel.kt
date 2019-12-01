@@ -13,11 +13,18 @@ import com.intellij.debugger.ui.impl.ThreadsPanel
 import com.intellij.debugger.ui.impl.watch.DebuggerTree
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.project.Project
+import com.intellij.ui.DoubleClickListener
+import java.awt.event.MouseEvent
 
 /**
- * Added into ui in [CoroutineXDebuggerManagerListener.registerCoroutinesPanel]
+ * Added into ui in [CoroutineProjectConnectionListener.registerCoroutinesPanel]
  */
 class CoroutinesPanel(project: Project, stateManager: DebuggerStateManager) : ThreadsPanel(project, stateManager) {
+
+    init {
+        registerDisposable((threadsTree as CoroutinesDebuggerTree).installAction())
+    }
+
     override fun createTreeView(): DebuggerTree {
         return CoroutinesDebuggerTree(project)
     }
