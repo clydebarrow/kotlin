@@ -47,7 +47,6 @@ class ModuleGenerator(override val context: GeneratorContext) : Generator {
         deserializer: IrDeserializer? = null,
         extensions: StubGeneratorExtensions = StubGeneratorExtensions.EMPTY
     ) {
-        referenceExpectsForUsedActuals(context.symbolTable, irModule)
         val fullIrProvidersList = generateTypicalIrProviderList(
             irModule.descriptor, context.irBuiltIns, context.symbolTable, deserializer,
             extensions

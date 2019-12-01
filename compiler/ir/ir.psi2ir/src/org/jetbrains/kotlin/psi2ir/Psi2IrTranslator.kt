@@ -23,10 +23,7 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi2ir.generators.AnnotationGenerator
-import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
-import org.jetbrains.kotlin.psi2ir.generators.GeneratorExtensions
-import org.jetbrains.kotlin.psi2ir.generators.ModuleGenerator
+import org.jetbrains.kotlin.psi2ir.generators.*
 import org.jetbrains.kotlin.psi2ir.transformations.insertImplicitCasts
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.utils.SmartList
@@ -77,12 +74,14 @@ class Psi2IrTranslator(
         val moduleGenerator = ModuleGenerator(context)
         val irModule = moduleGenerator.generateModuleFragmentWithoutDependencies(ktFiles)
 
+        referenceExpectsForUsedActuals(context.symbolTable, irModule)
         moduleGenerator.generateUnboundSymbolsAsDependencies(irProviders)
         irModule.patchDeclarationParents()
         postprocess(context, irModule)
         irModule.computeUniqIdForDeclarations(context.symbolTable)
 
         moduleGenerator.generateUnboundSymbolsAsDependencies(irProviders)
+
         return irModule
     }
 
