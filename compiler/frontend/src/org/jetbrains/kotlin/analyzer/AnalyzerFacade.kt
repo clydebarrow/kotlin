@@ -55,7 +55,7 @@ abstract class ResolverForProject<M : ModuleInfo> {
     companion object {
         const val resolverForSdkName = "sdk"
         const val resolverForLibrariesName = "project libraries"
-        const val resolverForModulesName = "project source roots and libraries"
+        const val resolverForModulesName = "project source roots"
         const val resolverForScriptDependenciesName = "dependencies of scripts"
 
         const val resolverForSpecialInfoName = "completion/highlighting in "
