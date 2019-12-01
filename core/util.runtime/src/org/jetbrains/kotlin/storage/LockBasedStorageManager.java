@@ -88,7 +88,7 @@ public class LockBasedStorageManager implements StorageManager {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "@" + Integer.toHexString(hashCode()) + " (" + debugText + ")";
+        return getClass().getSimpleName() + "@" + Integer.toHexString(hashCode()) + " " + lock + " (" + debugText + ")";
     }
 
     public LockBasedStorageManager replaceExceptionHandling(
@@ -352,6 +352,7 @@ public class LockBasedStorageManager implements StorageManager {
 
                 value = NotValue.COMPUTING;
                 try {
+                    System.out.println(storageManager);
                     T typedValue = computable.invoke();
 
                     // Don't publish computed value till post compute is finished as it may cause a race condition
