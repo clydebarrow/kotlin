@@ -233,6 +233,7 @@ class KotlinImportOptimizer : ImportOptimizer {
 
     companion object {
         fun collectDescriptorsToImport(file: KtFile): OptimizedImportsBuilder.InputData {
+            ProgressIndicatorProvider.getInstance().progressIndicator?.isIndeterminate = false
             val visitor = CollectUsedDescriptorsVisitor(file)
             file.accept(visitor)
             return visitor.data
