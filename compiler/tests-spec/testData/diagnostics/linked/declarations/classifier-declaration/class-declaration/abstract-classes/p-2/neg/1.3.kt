@@ -9,6 +9,7 @@
  * PLACE: declarations, classifier-declaration, class-declaration, abstract-classes -> paragraph 2 -> sentence 1
  * NUMBER: 3
  * DESCRIPTION: attempt to implement abstract members with invalid types
+ * ISSUES: KT-27825
  */
 
 // TESTCASE NUMBER: 1
