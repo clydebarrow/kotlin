@@ -9,6 +9,7 @@
  * PLACE: declarations, classifier-declaration, class-declaration, abstract-classes -> paragraph 2 -> sentence 1
  * NUMBER: 2
  * DESCRIPTION: Abstract classes may contain one or more abstract members, which should be implemented in a subtype of this abstract class
+ * HELPERS: checkType, functions
  * ISSUES: KT-27825
  */
 
@@ -16,6 +17,7 @@
 
 fun case1(){
     <!DEBUG_INFO_EXPRESSION_TYPE("OtherClass.ImplBase2")!>OtherClass().zoooo()<!>
+    checkSubtype<MainClass.Base2>(OtherClass().zoooo())
 }
 
 class MainClass {
