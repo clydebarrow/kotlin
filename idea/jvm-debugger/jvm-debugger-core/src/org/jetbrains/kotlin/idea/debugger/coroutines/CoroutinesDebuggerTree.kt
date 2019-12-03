@@ -33,8 +33,8 @@ import com.intellij.xdebugger.impl.ui.DebuggerUIUtil
 import com.sun.jdi.ClassType
 import org.jetbrains.kotlin.idea.debugger.AsyncStackTraceContext
 import org.jetbrains.kotlin.idea.debugger.KotlinCoroutinesAsyncStackTraceProvider
+import org.jetbrains.kotlin.idea.debugger.coroutines.command.CoroutineBuildCreationFrameCommand
 import org.jetbrains.kotlin.idea.debugger.coroutines.command.CoroutineBuildFrameCommand
-import org.jetbrains.kotlin.idea.debugger.coroutines.command.CreationBuildCreationFrameCommand
 import org.jetbrains.kotlin.idea.debugger.evaluate.ExecutionContext
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
@@ -83,7 +83,7 @@ class CoroutinesDebuggerTree(project: Project) : ThreadsDebuggerTree(project) {
         val state = session?.state ?: DebuggerSession.State.DISPOSED
 
         if (ApplicationManager.getApplication().isUnitTestMode || state in EnumSet.of(DebuggerSession.State.PAUSED, DebuggerSession.State.RUNNING)) {
-            showMessage(MessageDescriptor.EVALUATING)
+//            showMessage(MessageDescriptor.EVALUATING)
             context.debugProcess!!.managerThread.schedule(command)
         } else {
             showMessage(session?.stateDescription ?: DebuggerBundle.message("status.debug.stopped"))
@@ -130,7 +130,7 @@ class CoroutinesDebuggerTree(project: Project) : ThreadsDebuggerTree(project) {
             is CoroutineDescriptorImpl ->
                 CoroutineBuildFrameCommand(node, descriptor, myNodeManager, debuggerContext)
             is CreationFramesDescriptor ->
-                CreationBuildCreationFrameCommand(node, descriptor, myNodeManager, debuggerContext)
+                CoroutineBuildCreationFrameCommand(node, descriptor, myNodeManager, debuggerContext)
             else -> null
         }
     }
@@ -149,7 +149,8 @@ class CoroutinesDebuggerTree(project: Project) : ThreadsDebuggerTree(project) {
                 override fun keyPressed(e: KeyEvent) {
                     if (e.keyCode == KeyEvent.VK_ENTER && selectionCount == 1) {
                         val selected = selectionModel.selectionPath.lastPathComponent
-                        if (selected is DebuggerTreeNodeImpl) selectFrame(selected.userObject)
+                        if (selected is DebuggerTreeNodeImpl)
+                            selectFrame(selected.userObject)
                     }
                 }
             })
@@ -164,28 +165,20 @@ class CoroutinesDebuggerTree(project: Project) : ThreadsDebuggerTree(project) {
         }
     }
 
-    fun selectFrame(descriptor: Any): Boolean {
+    fun selectFrame(descriptor: Any) : Boolean {
         val dataContext = DataManager.getInstance().getDataContext(this@CoroutinesDebuggerTree)
-        val context = DebuggerManagerEx.getInstanceEx(project).context
+        val debugProcess = DebuggerManagerEx.getInstanceEx(project).context.debugProcess ?: return false
         when (descriptor) {
-            is SuspendStackFrameDescriptor -> {
+            is SuspendStackFrameDescriptor ->
                 buildSuspendStackFrameChildren(descriptor)
-                return true
-            }
-            is AsyncStackFrameDescriptor -> {
-                buildAsyncStackFrameChildren(descriptor, context.debugProcess ?: return false)
-                return true
-            }
-            is EmptyStackFrameDescriptor -> {
+            is AsyncStackFrameDescriptor ->
+                buildAsyncStackFrameChildren(descriptor, debugProcess)
+            is EmptyStackFrameDescriptor ->
                 buildEmptyStackFrameChildren(descriptor)
-                return true
-            }
-            is StackFrameDescriptor -> {
+            is StackFrameDescriptor ->
                 GotoFrameSourceAction.doAction(dataContext)
-                return true
-            }
-            else -> return true
         }
+        return true
     }
 
     private fun buildSuspendStackFrameChildren(descriptor: SuspendStackFrameDescriptor) {
