@@ -182,6 +182,16 @@ public class DiagnosticsTestSpecGenerated extends AbstractDiagnosticsTestSpec {
                                     runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/neg/1.4.kt");
                                 }
 
+                                @TestMetadata("1.5.kt")
+                                public void test1_5() throws Exception {
+                                    runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/neg/1.5.kt");
+                                }
+
+                                @TestMetadata("1.6.kt")
+                                public void test1_6() throws Exception {
+                                    runTest("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/neg/1.6.kt");
+                                }
+
                                 public void testAllFilesPresentInNeg() throws Exception {
                                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/neg"), Pattern.compile("^(.+)\\.kt$"), true);
                                 }

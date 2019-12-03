@@ -14,7 +14,7 @@
 
 // TESTCASE NUMBER: 1
 
-<!REDUNDANT_MODIFIER!>open<!>    abstract class Base {
+<!REDUNDANT_MODIFIER!>open<!>     abstract class Base {
 
     abstract val a: Any
     abstract var b: Any
@@ -32,9 +32,9 @@ fun case1() {
 
 class BaseImplCase2(
     override var a: Any, override
-<!VAR_OVERRIDDEN_BY_VAL!>val<!>  b: Any, override var c: Any, override
+    <!VAR_OVERRIDDEN_BY_VAL!>val<!>  b: Any, override var c: Any, override
 
-<!VAR_OVERRIDDEN_BY_VAL!>val<!>  d: Any = "5") : Base()
+ <!VAR_OVERRIDDEN_BY_VAL!>val<!>  d: Any = "5") : Base()
 {
     override fun foo() {}
     override internal fun boo() {}
@@ -52,14 +52,14 @@ class ImplBaseCase2() : Base() {
         set(value) {}
     override
 
-    <!VAR_OVERRIDDEN_BY_VAL!>val<!>  b: Any
+     <!VAR_OVERRIDDEN_BY_VAL!>val<!>  b: Any
         get() = TODO()
     override var c: Any
         get() = TODO()
         set(value) {}
     override
 
-    <!VAR_OVERRIDDEN_BY_VAL!>val<!>  d: Any
+     <!VAR_OVERRIDDEN_BY_VAL!>val<!>  d: Any
         get() = TODO()
 
     override fun foo() {}
@@ -126,4 +126,4 @@ fun case4() {
 * TESTCASE NUMBER: 5
 * NOTE: incompatible modifiers final and abstract
 */
-<!INCOMPATIBLE_MODIFIERS!>final<!> <!INCOMPATIBLE_MODIFIERS!>abstract<!> class Case5() {}
+<!INCOMPATIBLE_MODIFIERS!>final<!>   <!INCOMPATIBLE_MODIFIERS!>abstract<!>   class Case5() {}

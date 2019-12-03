@@ -17,8 +17,10 @@
 
 abstract class Base() {
     <!ABSTRACT_FUNCTION_WITH_BODY!>abstract<!> fun foo() = {}
-
+    <!NON_ABSTRACT_FUNCTION_WITH_NO_BODY!>fun boo() : Unit<!>
     abstract val a = <!ABSTRACT_PROPERTY_WITH_INITIALIZER!>""<!>
+    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val b<!>
+    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>var d<!>
 }
 
 class Impl : Base() {
