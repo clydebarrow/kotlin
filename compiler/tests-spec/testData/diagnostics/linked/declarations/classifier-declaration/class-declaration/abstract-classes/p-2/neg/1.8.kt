@@ -25,6 +25,11 @@ abstract class AbstractClassCase1() {
     protected abstract fun prot()
     internal abstract fun int()
     public abstract fun pub()
+
+    <!INCOMPATIBLE_MODIFIERS!>private<!> <!INCOMPATIBLE_MODIFIERS!>abstract<!> val priv1: String
+    protected abstract val prot1: String
+    internal abstract val int1: String
+    public abstract val pub1: String
 }
 
 <!INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER!>class Case1<!> : AbstractClassCase1(){
@@ -35,6 +40,14 @@ abstract class AbstractClassCase1() {
     }
 
     override fun pub() {}
+
+    override val prot1: String
+        get() = ""
+    override val int1: String
+        get() = ""
+    override val pub1: String
+        get() = ""
+
 }
 
 fun case1(){
@@ -43,6 +56,11 @@ fun case1(){
     a.<!INVISIBLE_MEMBER!>prot<!>()
     a.int()
     a.pub()
+
+    a.<!INVISIBLE_MEMBER!>priv1<!>
+    a.<!INVISIBLE_MEMBER!>prot1<!>
+    a.int1
+    a.pub1
 }
 
 //MODULE: implBase(base)
@@ -57,4 +75,9 @@ fun case2() {
     a.<!INVISIBLE_MEMBER!>prot<!>()
     a.<!INVISIBLE_MEMBER!>int<!>()
     a.pub()
+
+    a.<!INVISIBLE_MEMBER!>priv1<!>
+    a.<!INVISIBLE_MEMBER!>prot1<!>
+    a.<!INVISIBLE_MEMBER!>int1<!>
+    a.pub1
 }
