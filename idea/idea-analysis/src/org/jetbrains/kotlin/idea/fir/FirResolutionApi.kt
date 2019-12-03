@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
+import org.jetbrains.kotlin.fir.resolve.diagnostics.collectors.FirDiagnosticsCollector
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDesignatedBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.runResolve
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
@@ -109,6 +110,15 @@ fun KtFile.getOrBuildFir(
     val firProvider = FirProvider.getInstance(session) as IdeFirProvider
     val firFile = firProvider.getOrBuildFile(this)
     firFile.runResolve(firFile, firProvider, phase, state)
+    return firFile
+}
+
+fun KtFile.getOrBuildFirWithDiagnostics(state: FirResolveState): FirFile {
+    val firFile = getOrBuildFir(state, FirResolvePhase.BODY_RESOLVE)
+    if (state.hasDiagnosticsForFile(this)) return firFile
+
+    val coneDiagnostics = FirDiagnosticsCollector.DEFAULT.collectDiagnostics(firFile)
+    state.setDiagnosticsForFile(this, firFile, coneDiagnostics)
     return firFile
 }
 
