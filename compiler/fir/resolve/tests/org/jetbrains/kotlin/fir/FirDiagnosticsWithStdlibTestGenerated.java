@@ -410,6 +410,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         public void testComplexConstraintSystem() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/stdlib/inference/complexConstraintSystem.kt");
         }
+
+        @TestMetadata("noSubstitutedTypeParameter.kt")
+        public void testNoSubstitutedTypeParameter() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/stdlib/inference/noSubstitutedTypeParameter.kt");
+        }
     }
 
     @TestMetadata("compiler/fir/resolve/testData/resolve/stdlib/j+k")

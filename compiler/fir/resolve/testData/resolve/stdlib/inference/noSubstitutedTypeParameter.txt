@@ -1,0 +1,9 @@
+FILE: noSubstitutedTypeParameter.kt
+    public final val f: <ERROR TYPE REF: Inapplicable(INAPPLICABLE): [/firstOrNull]> = R|/listOf|<R|kotlin/String|>(String()).<Inapplicable(INAPPLICABLE): [/firstOrNull]>#(Int(1))
+        public get(): <ERROR TYPE REF: Inapplicable(INAPPLICABLE): [/firstOrNull]>
+    public final fun <T> listOf(element: R|T|): R|kotlin/collections/List<T>| {
+        ^listOf Q|java/util/Collections|.R|java/util/Collections.singletonList|<R|ft<T, T>|>(R|<local>/element|)
+    }
+    public final fun <T> R|kotlin/collections/Iterable<T>|.firstOrNull(predicate: R|(T) -> kotlin/Boolean|): R|T?| {
+        ^firstOrNull Null(null)
+    }
