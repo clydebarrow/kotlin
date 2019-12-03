@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.findTopLevelDeclaration
 import org.jetbrains.kotlin.ir.util.lineStartOffsets
 import org.jetbrains.kotlin.ir.util.module
@@ -30,9 +31,6 @@ import org.jetbrains.kotlin.library.impl.IrMemoryArrayWriter
 import org.jetbrains.kotlin.library.impl.IrMemoryDeclarationWriter
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
-import org.jetbrains.kotlin.resolve.multiplatform.findExpects
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.backend.common.serialization.proto.ClassKind as ProtoClassKind
 import org.jetbrains.kotlin.backend.common.serialization.proto.Coordinates as ProtoCoordinates
@@ -124,16 +122,16 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.Actual as ProtoAc
 open class IrFileSerializer(
     val logger: LoggingContext,
     private val declarationTable: DeclarationTable,
+    private val expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
     private val bodiesOnlyForInlines: Boolean = false,
     private val skipExpects: Boolean = false
 ) {
+    private val loopIndex = mutableMapOf<IrLoop, Int>()
+    private var currentLoopIndex = 0
 
     // For every actual we keep a corresponding expects' uniqIds.
     // The linker substitutes actual symbols when asked for an expect uniqId.
-    val expectActualTable = mutableMapOf<DeclarationDescriptor, IrSymbol>()
-
-    private val loopIndex = mutableMapOf<IrLoop, Int>()
-    private var currentLoopIndex = 0
+    private val expectActualTable = ExpectActualTable(expectDescriptorToSymbol)
 
     // The same symbol can be used multiple times in a file
     // so use this index to store symbol data only once.
@@ -257,61 +255,6 @@ open class IrFileSerializer(
             TODO("Unexpected symbol kind: $symbol")
     }
 
-    // TODO: Do that when we know how to match actual typealias right hand side with its expects
-
-    fun IrElement.recordActuals(inModule: ModuleDescriptor) {
-        this.acceptVoid(object : IrElementVisitorVoid {
-            override fun visitElement(element: IrElement) {
-                element.acceptChildrenVoid(this)
-            }
-            override fun visitDeclaration(declaration: IrDeclaration) {
-                //trackExpectsAndActuals(declaration)
-                println("INSIDE ${declaration.descriptor}: ")
-                if (declaration is IrFunction || declaration is IrClass || declaration is IrProperty || declaration is IrEnumEntry) {
-
-                    declaration.descriptor.findActuals(inModule).forEach {
-                        println("expect ${declaration.descriptor} -> actual: $it")
-                    }
-                }
-                super.visitDeclaration(declaration)
-            }
-        })
-    }
-
-    fun DeclarationDescriptor.findActuals(inModule: ModuleDescriptor = this.module): List<MemberDescriptor> {
-        println("Searching actuals for expect $this in module ${inModule.name}")
-        return ExpectedActualResolver.findActualForExpected(
-                (this as MemberDescriptor),
-                inModule,
-                { true }
-        )?.get(ExpectedActualResolver.Compatibility.Compatible).orEmpty()
-    }
-
-    private fun findExpectsForActuals(declaration: IrDeclaration) {
-        if (declaration.descriptor !is MemberDescriptor) return
-        if (declaration !is IrSymbolDeclaration<*>) return
-
-        val descriptor = declaration.symbol.descriptor
-
-        if (declaration is IrTypeAlias && declaration.isActual) {
-
-            declaration.descriptor.findExpects().forEach {
-                expectDescriptorToSymbol[it]?.owner?.recordActuals(declaration./*expandedType.classOrNull?.owner?.*/descriptor?.module ?: error("Unexpected right hand side of an actual typealias ${declaration.descriptor}"))
-            }
-        }
-
-        val expects: List<MemberDescriptor> = if (descriptor is ClassConstructorDescriptor && descriptor.isPrimary) {
-            (descriptor.containingDeclaration.findExpects() as List<ClassDescriptor>).map {
-                it.unsubstitutedPrimaryConstructor
-            }.filterNotNull()
-        } else {
-            descriptor.findExpects()
-        }
-
-        expects.forEach { expect ->
-            expectActualTable.put(expect, declaration.symbol)
-        }
-    }
 
     private fun serializeIrSymbolData(symbol: IrSymbol): ProtoSymbolData {
 
@@ -1051,7 +994,7 @@ open class IrFileSerializer(
     }
 
     private fun serializeIrDeclarationBase(declaration: IrDeclaration): ProtoDeclarationBase {
-        findExpectsForActuals(declaration)
+        expectActualTable.findExpectsForActuals(declaration)
         return ProtoDeclarationBase.newBuilder()
             .setSymbol(serializeIrSymbol((declaration as IrSymbolOwner).symbol))
             .setCoordinates(serializeCoordinates(declaration.startOffset, declaration.endOffset))
@@ -1405,7 +1348,7 @@ open class IrFileSerializer(
     }
 
     fun serializeExpectActualSubstitutionTable(proto: ProtoFile.Builder) {
-        expectActualTable.forEach next@{ (expect, actualSymbol) ->
+        expectActualTable.table.forEach next@{ (expect, actualSymbol) ->
             val expectSymbol = expectDescriptorToSymbol[expect]
                 ?: error("Could not find expect symbol for expect descriptor $expect")
             val expectDeclaration = expectSymbol.owner as IrDeclaration

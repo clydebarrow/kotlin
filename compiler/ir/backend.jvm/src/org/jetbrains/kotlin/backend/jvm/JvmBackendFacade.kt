@@ -54,7 +54,7 @@ object JvmBackendFacade {
             psi2irContext.moduleDescriptor, psi2irContext.irBuiltIns, psi2irContext.symbolTable,
             extensions = extensions
         )
-        val irModuleFragment = psi2ir.generateModuleFragment(psi2irContext, files, irProviders = irProviders)
+        val irModuleFragment = psi2ir.generateModuleFragment(psi2irContext, files, irProviders = irProviders, expectDescriptorToSymbol = null)
         doGenerateFilesInternal(
             state, errorHandler, irModuleFragment, psi2irContext.symbolTable, psi2irContext.sourceManager, phaseConfig, extensions
         )
