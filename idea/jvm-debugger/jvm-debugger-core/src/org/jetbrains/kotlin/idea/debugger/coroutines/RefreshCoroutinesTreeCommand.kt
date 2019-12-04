@@ -28,7 +28,7 @@ class RefreshCoroutinesTreeCommand(
         val root = nf.defaultNode
         val sc: SuspendContextImpl? = suspendContext
         if (context.debuggerSession is DebuggerSession && sc is SuspendContextImpl && !sc.isResumed) {
-            val infoCache = sc.coroutineProbeProxy.dumpCoroutines()
+            val infoCache = getProxyForContext(sc).dumpCoroutines()
             if (infoCache.isOk()) {
                 val evaluationContext = sc.createEvaluationContext()
 

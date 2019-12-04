@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.debugger.coroutines
 import com.intellij.debugger.DebuggerManagerEx
 import com.intellij.debugger.engine.SuspendContextImpl
 import com.intellij.debugger.engine.evaluation.EvaluateException
+import com.intellij.debugger.engine.evaluation.EvaluationContext
 import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
 import com.intellij.debugger.impl.DebuggerUtilsEx
 import com.intellij.debugger.impl.descriptors.data.DescriptorData
@@ -21,10 +22,10 @@ import com.intellij.debugger.ui.impl.watch.StackFrameDescriptorImpl
 import com.intellij.debugger.ui.tree.render.DescriptorLabelListener
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.project.Project
-import com.sun.jdi.ClassType
-import com.sun.jdi.ObjectReference
+import com.sun.jdi.*
 import javaslang.control.Either
 import org.jetbrains.kotlin.idea.debugger.evaluate.ExecutionContext
+import org.jetbrains.kotlin.idea.debugger.isSubtype
 import javax.swing.Icon
 
 /**
@@ -63,8 +64,8 @@ class CoroutineDescriptorImpl(val state: CoroutineState) : NodeDescriptorImpl() 
     }
 
     private fun calcIcon() = when {
-        state.isSuspended -> AllIcons.Debugger.ThreadSuspended
-        state.state == CoroutineState.State.CREATED -> AllIcons.Debugger.ThreadStates.Idle
+        state.isSuspended() -> AllIcons.Debugger.ThreadSuspended
+        state.isCreated() -> AllIcons.Debugger.ThreadStates.Idle
         else -> AllIcons.Debugger.ThreadRunning
     }
 
@@ -73,68 +74,127 @@ class CoroutineDescriptorImpl(val state: CoroutineState) : NodeDescriptorImpl() 
     }
 }
 
-class CoroutineStackFrameData private constructor(val state: CoroutineState, private val proxy: StackFrameProxyImpl) :
-    DescriptorData<NodeDescriptorImpl>() {
-    private lateinit var frame: Either<StackTraceElement, StackFrameItem>
+class CoroutineStackTraceData(state: CoroutineState, proxy: StackFrameProxyImpl, evalContext: EvaluationContextImpl, val frame: StackTraceElement)
+    : CoroutineStackData(state, proxy, evalContext) {
 
-    constructor(state: CoroutineState, frame: StackTraceElement, proxy: StackFrameProxyImpl) : this(state, proxy) {
-        this.frame = Either.left(frame)
-    }
-
-    constructor(state: CoroutineState, frameItem: StackFrameItem, proxy: StackFrameProxyImpl) : this(state, proxy) {
-        this.frame = Either.right(frameItem)
-    }
 
     override fun hashCode(): Int {
-        return if (frame.isLeft) frame.left.hashCode() else frame.get().hashCode()
+        return frame.hashCode()
     }
 
     override fun equals(other: Any?): Boolean {
-        return other is CoroutineStackFrameData && frame == other.frame
+        return other is CoroutineStackTraceData && frame == other.frame
     }
 
-    /**
-     * Returns [EmptyStackFrameDescriptor], [SuspendStackFrameDescriptor]
-     * or [AsyncStackFrameDescriptor] according to current frame
-     */
     override fun createDescriptorImpl(project: Project): NodeDescriptorImpl {
-        val isLeft = frame.isLeft
-        if (!isLeft) return AsyncStackFrameDescriptor(state, frame.get(), proxy)
         // check whether last fun is suspend fun
-        val frame = frame.left
-        val suspendContext =
-            DebuggerManagerEx.getInstanceEx(project).context.suspendContext ?: return EmptyStackFrameDescriptor(
-                frame,
-                proxy
-            )
-        val suspendProxy = suspendContext.frameProxy ?: return EmptyStackFrameDescriptor(
-            frame,
-            proxy
-        )
-        val evalContext = EvaluationContextImpl(suspendContext, suspendContext.frameProxy)
-        val context = ExecutionContext(evalContext, suspendProxy)
+//        val suspendContext =
+//            DebuggerManagerEx.getInstanceEx(project).context.suspendContext ?: return EmptyStackFrameDescriptor(
+//                frame,
+//                proxy
+//            )
+//        val suspendProxy = suspendContext.frameProxy ?: return EmptyStackFrameDescriptor(
+//            frame,
+//            proxy
+//        )
+//        val evalContext = EvaluationContextImpl(suspendContext, suspendContext.frameProxy)
+        val context = ExecutionContext(evalContext, proxy)
         val clazz = context.findClass(frame.className) as ClassType
         val method = clazz.methodsByName(frame.methodName).last {
             val loc = it.location().lineNumber()
             loc < 0 && frame.lineNumber < 0 || loc > 0 && loc <= frame.lineNumber
         } // pick correct method if an overloaded one is given
-        return if ("Lkotlin/coroutines/Continuation;)" in method.signature() ||
-            method.name() == "invokeSuspend" &&
-            method.signature() == "(Ljava/lang/Object;)Ljava/lang/Object;" // suspend fun or invokeSuspend
-        ) {
-            val continuation = state.getContinuation(frame, context)
-            if (continuation == null) EmptyStackFrameDescriptor(
-                frame,
-                proxy
-            ) else
-                SuspendStackFrameDescriptor(
-                    state,
-                    frame,
-                    proxy,
-                    continuation
-                )
-        } else EmptyStackFrameDescriptor(frame, proxy)
+
+        val stackFrameDescriptor = createStackFrameDescriptor(method, context)
+        return stackFrameDescriptor
     }
+
+    private fun createStackFrameDescriptor(method: Method, context: ExecutionContext): NodeDescriptorImpl {
+        // retrieve continuation only if suspend method
+        val continuation = if (suspendOrInvokeSuspend(method)) getContinuation(frame, context) else null
+
+        return if (continuation is ObjectReference)
+            SuspendStackFrameDescriptor(state,frame, proxy, continuation)
+        else
+            EmptyStackFrameDescriptor(frame, proxy)
+    }
+
+    private fun suspendOrInvokeSuspend(method: Method): Boolean =
+        "Lkotlin/coroutines/Continuation;)" in method.signature() ||
+                method.name() == "invokeSuspend" &&
+                method.signature() == "(Ljava/lang/Object;)Ljava/lang/Object;" // suspend fun or invokeSuspend
+
+
+    /**
+     * Find continuation for the [stackTraceElement]
+     * Gets current CoroutineInfo.lastObservedFrame and finds next frames in it until null or needed stackTraceElement is found
+     * @return null if matching continuation is not found or is not BaseContinuationImpl
+     */
+    fun getContinuation(stackTraceElement: StackTraceElement, context: ExecutionContext): ObjectReference? {
+        var continuation = state.frame ?: return null
+        val baseType = "kotlin.coroutines.jvm.internal.BaseContinuationImpl"
+        val getTrace = (continuation.type() as ClassType).concreteMethodByName(
+            "getStackTraceElement",
+            "()Ljava/lang/StackTraceElement;"
+        )
+        val stackTraceType = context.findClass("java.lang.StackTraceElement") as ClassType
+        val getClassName = stackTraceType.concreteMethodByName("getClassName", "()Ljava/lang/String;")
+        val getLineNumber = stackTraceType.concreteMethodByName("getLineNumber", "()I")
+        val className = {
+            val trace = context.invokeMethod(continuation, getTrace, emptyList()) as? ObjectReference
+            if (trace != null)
+                (context.invokeMethod(trace, getClassName, emptyList()) as StringReference).value()
+            else null
+        }
+        val lineNumber = {
+            val trace = context.invokeMethod(continuation, getTrace, emptyList()) as? ObjectReference
+            if (trace != null)
+                (context.invokeMethod(trace, getLineNumber, emptyList()) as IntegerValue).value()
+            else null
+        }
+
+        while (continuation.type().isSubtype(baseType)
+            && (stackTraceElement.className != className() || stackTraceElement.lineNumber != lineNumber())
+        ) {
+            // while continuation is BaseContinuationImpl and it's frame equals to the current
+            continuation = getNextFrame(continuation, context) ?: return null
+        }
+        return if (continuation.type().isSubtype(baseType)) continuation else null
+    }
+
+
+    /**
+     * Finds previous Continuation for this Continuation (completion field in BaseContinuationImpl)
+     * @return null if given ObjectReference is not a BaseContinuationImpl instance or completion is null
+     */
+    private fun getNextFrame(continuation: ObjectReference, context: ExecutionContext): ObjectReference? {
+        val type = continuation.type() as ClassType
+        if (!type.isSubtype("kotlin.coroutines.jvm.internal.BaseContinuationImpl")) return null
+        val next = type.concreteMethodByName("getCompletion", "()Lkotlin/coroutines/Continuation;")
+        return context.invokeMethod(continuation, next, emptyList()) as? ObjectReference
+    }
+}
+
+class CoroutineStackFrameData(state: CoroutineState, proxy: StackFrameProxyImpl, evalContext: EvaluationContextImpl, val frame: StackFrameItem)
+    : CoroutineStackData(state, proxy, evalContext) {
+    override fun createDescriptorImpl(project: Project): NodeDescriptorImpl = AsyncStackFrameDescriptor(state, frame, proxy)
+
+
+    override fun hashCode(): Int {
+        return frame.hashCode()
+    }
+
+    override fun equals(other: Any?): Boolean {
+        return other is CoroutineStackFrameData && frame == other.frame
+    }
+}
+
+abstract class CoroutineStackData(val state: CoroutineState, val proxy: StackFrameProxyImpl, val evalContext: EvaluationContextImpl) : DescriptorData<NodeDescriptorImpl>() {
+
+    /**
+     * Returns [EmptyStackFrameDescriptor], [SuspendStackFrameDescriptor]
+     * or [AsyncStackFrameDescriptor] according to current frame
+     */
 
     override fun getDisplayKey(): DisplayKey<NodeDescriptorImpl> = SimpleDisplayKey(state)
 }

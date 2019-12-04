@@ -184,8 +184,8 @@ class CoroutineDumpPanel(project: Project, consoleView: ConsoleView, toolbarActi
 
     private fun getAttributes(state: CoroutineState): SimpleTextAttributes {
         return when {
-            state.isSuspended -> SimpleTextAttributes.GRAY_ATTRIBUTES
-            state.isEmptyStackTrace -> SimpleTextAttributes(SimpleTextAttributes.STYLE_PLAIN, Color.GRAY.brighter())
+            state.isSuspended() -> SimpleTextAttributes.GRAY_ATTRIBUTES
+            state.isEmptyStackTrace() -> SimpleTextAttributes(SimpleTextAttributes.STYLE_PLAIN, Color.GRAY.brighter())
             else -> SimpleTextAttributes.REGULAR_ATTRIBUTES
 
         }

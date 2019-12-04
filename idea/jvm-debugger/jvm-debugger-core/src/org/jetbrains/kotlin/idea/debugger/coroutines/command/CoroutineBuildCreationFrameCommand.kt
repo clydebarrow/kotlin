@@ -22,7 +22,8 @@ class CoroutineBuildCreationFrameCommand(
         val evalContext = debuggerContext.createEvaluationContext() ?: return
         val proxy = threadProxy.forceFrames().first()
         descriptor.frames.forEach {
-            myChildren.add(myNodeManager.createNode(EmptyStackFrameDescriptor(it, proxy), evalContext))
+            val descriptor = myNodeManager.createNode(EmptyStackFrameDescriptor(it, proxy), evalContext)
+            myChildren.add(descriptor)
         }
         updateUI(true)
     }

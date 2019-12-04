@@ -14,7 +14,7 @@ import org.jetbrains.idea.maven.aether.ArtifactKind
 import org.jetbrains.jps.model.library.JpsMavenRepositoryLibraryDescriptor
 import org.jetbrains.kotlin.idea.debugger.coroutines.CoroutineState
 import org.jetbrains.kotlin.idea.debugger.coroutines.CoroutinesDebugProbesProxy
-import org.jetbrains.kotlin.idea.debugger.coroutines.coroutineProbeProxy
+import org.jetbrains.kotlin.idea.debugger.coroutines.getProxyForContext
 import org.jetbrains.kotlin.idea.debugger.evaluate.ExecutionContext
 import org.jetbrains.kotlin.idea.debugger.test.preference.DebuggerPreferences
 
@@ -24,7 +24,7 @@ abstract class AbstractCoroutineDumpTest : KotlinDescriptorTestCaseWithStepping(
     override fun doMultiFileTest(files: TestFiles, preferences: DebuggerPreferences) {
 
         doOnBreakpoint {
-            val infoCache = this.coroutineProbeProxy.dumpCoroutines()
+            val infoCache = getProxyForContext(this).dumpCoroutines()
             try {
                 if (infoCache.isOk())
                     try {
@@ -40,7 +40,7 @@ abstract class AbstractCoroutineDumpTest : KotlinDescriptorTestCaseWithStepping(
         }
 
         doOnBreakpoint {
-            val infoCache = this.coroutineProbeProxy.dumpCoroutines()
+            val infoCache = getProxyForContext(this).dumpCoroutines()
             try {
                 if (infoCache.isOk())
                     try {

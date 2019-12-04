@@ -80,9 +80,9 @@ class CoroutinesDebuggerTree(project: Project) : ThreadsDebuggerTree(project) {
     override fun build(context: DebuggerContextImpl) {
         val session = context.debuggerSession
         val command = RefreshCoroutinesTreeCommand(context,this)
-        val state = session?.state ?: DebuggerSession.State.DISPOSED
+        val debuggerSessionState = session?.state ?: DebuggerSession.State.DISPOSED
 
-        if (ApplicationManager.getApplication().isUnitTestMode || state in EnumSet.of(DebuggerSession.State.PAUSED, DebuggerSession.State.RUNNING)) {
+        if (ApplicationManager.getApplication().isUnitTestMode || debuggerSessionState in EnumSet.of(DebuggerSession.State.PAUSED, DebuggerSession.State.RUNNING)) {
 //            showMessage(MessageDescriptor.EVALUATING)
             context.debugProcess!!.managerThread.schedule(command)
         } else {

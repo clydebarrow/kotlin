@@ -22,7 +22,7 @@ import java.awt.event.MouseEvent
 class CoroutinesPanel(project: Project, stateManager: DebuggerStateManager) : ThreadsPanel(project, stateManager) {
 
     init {
-        registerDisposable((threadsTree as CoroutinesDebuggerTree).installAction())
+//        registerDisposable((threadsTree as CoroutinesDebuggerTree).installAction())
     }
 
     override fun createTreeView(): DebuggerTree {
