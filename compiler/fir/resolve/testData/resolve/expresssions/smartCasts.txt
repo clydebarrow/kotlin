@@ -1,0 +1,503 @@
+FILE: smartCasts.kt
+    public open class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun foo(): R|kotlin/Unit| {
+            when () {
+                (this@R|/A| is R|B|) ->  {
+                    this@R|/B|.R|/B.bar|()
+                }
+            }
+
+        }
+
+    }
+    public final class B : R|A| {
+        public constructor(): R|B| {
+            super<R|A|>()
+        }
+
+        public final fun bar(): R|kotlin/Unit| {
+        }
+
+    }
+    public final fun f9(a: R|A?|): R|kotlin/Unit| {
+        R|<local>/a|?.R|/A.foo|()
+        R|<local>/a|?.<Unresolved name: bar>#()
+        when () {
+            (R|<local>/a| is R|B|) ->  {
+                R|<local>/a|.R|/B.bar|()
+                R|<local>/a|.R|/A.foo|()
+            }
+        }
+
+        R|<local>/a|?.R|/A.foo|()
+        R|<local>/a|?.<Unresolved name: bar>#()
+        when () {
+            (R|<local>/a| is R|B|).R|kotlin/Boolean.not|() ->  {
+                R|<local>/a|?.<Unresolved name: bar>#()
+                R|<local>/a|?.R|/A.foo|()
+            }
+        }
+
+        when () {
+            (R|<local>/a| is R|B|).R|kotlin/Boolean.not|() || ==(R|<local>/a|.R|/B.bar|(), Q|kotlin/Unit|) ->  {
+                R|<local>/a|?.<Unresolved name: bar>#()
+            }
+        }
+
+        when () {
+            (R|<local>/a| is R|B|).R|kotlin/Boolean.not|() ->  {
+                ^f9 Unit
+            }
+        }
+
+        R|<local>/a|.R|/B.bar|()
+        R|<local>/a|.R|/A.foo|()
+    }
+    public final fun fAny(a: R|kotlin/Any?|): R|kotlin/Unit| {
+        when () {
+            (R|<local>/a| is R|B|) ->  {
+                R|<local>/a|.R|/B.bar|()
+                R|<local>/a|.R|/A.foo|()
+            }
+        }
+
+        when () {
+            (R|<local>/a| is R|B|).R|kotlin/Boolean.not|() ->  {
+                ^fAny Unit
+            }
+        }
+
+        R|<local>/a|.R|/B.bar|()
+        R|<local>/a|.R|/A.foo|()
+    }
+    public final fun f10(a: R|A?|): R|kotlin/Unit| {
+        when () {
+            (R|<local>/a| is R|B|).R|kotlin/Boolean.not|() ->  {
+                ^f10 Unit
+            }
+        }
+
+        when () {
+            (R|<local>/a| is R|B|).R|kotlin/Boolean.not|() ->  {
+                ^f10 Unit
+            }
+        }
+
+    }
+    public final class C : R|A| {
+        public constructor(): R|C| {
+            super<R|A|>()
+        }
+
+        public final fun bar(): R|kotlin/Unit| {
+        }
+
+    }
+    public final fun f101(a: R|A?|): R|kotlin/Unit| {
+        when () {
+            (R|<local>/a| is R|C|) ->  {
+                R|<local>/a|.R|/C.bar|()
+            }
+        }
+
+    }
+    public final fun f11(a: R|A?|): R|kotlin/Unit| {
+        when (R|<local>/a|) {
+            ($subj$ is R|B|) ->  {
+                R|<local>/a|.R|/B.bar|()
+            }
+            ($subj$ is R|A|) ->  {
+                R|<local>/a|.R|/A.foo|()
+            }
+            ($subj$ is R|kotlin/Any|) ->  {
+                R|<local>/a|.R|/A.foo|()
+            }
+            ($subj$ is R|kotlin/Any?|) ->  {
+                R|<local>/a|.<Unresolved name: bar>#()
+            }
+            else ->  {
+                R|<local>/a|?.R|/A.foo|()
+            }
+        }
+
+    }
+    public final fun f12(a: R|A?|): R|kotlin/Unit| {
+        when (R|<local>/a|) {
+            ($subj$ is R|B|) ->  {
+                R|<local>/a|.R|/B.bar|()
+            }
+            ($subj$ is R|A|) ->  {
+                R|<local>/a|.R|/A.foo|()
+            }
+            ($subj$ is R|kotlin/Any|) ->  {
+                R|<local>/a|.R|/A.foo|()
+            }
+            ($subj$ is R|kotlin/Any?|) ->  {
+                R|<local>/a|.<Unresolved name: bar>#()
+            }
+            ($subj$ is R|C|) ->  {
+                R|<local>/a|.R|/C.bar|()
+            }
+            else ->  {
+                R|<local>/a|?.R|/A.foo|()
+            }
+        }
+
+        when () {
+            (R|<local>/a| is R|kotlin/Any?|) ->  {
+                R|<local>/a|?.<Unresolved name: bar>#()
+            }
+        }
+
+        when () {
+            (R|<local>/a| is R|B|) ->  {
+                R|<local>/a|.R|/B.bar|()
+            }
+        }
+
+    }
+    public final fun f13(a: R|A?|): R|kotlin/Unit| {
+        when () {
+            (R|<local>/a| is R|B|) ->  {
+                R|<local>/a|.R|/A.foo|()
+                R|<local>/a|.R|/B.bar|()
+            }
+            else ->  {
+                R|<local>/a|?.R|/A.foo|()
+                <Unresolved name: bar>#()
+            }
+        }
+
+        R|<local>/a|?.R|/A.foo|()
+        when () {
+            (R|<local>/a| is R|B|).R|kotlin/Boolean.not|() ->  {
+                R|<local>/a|?.R|/A.foo|()
+            }
+            else ->  {
+                R|<local>/a|.R|/A.foo|()
+            }
+        }
+
+        R|<local>/a|?.R|/A.foo|()
+        when () {
+            (R|<local>/a| is R|B|) && ==(R|<local>/a|.R|/A.foo|(), Q|kotlin/Unit|) ->  {
+                R|<local>/a|.R|/A.foo|()
+                R|<local>/a|.R|/B.bar|()
+            }
+            else ->  {
+                R|<local>/a|?.R|/A.foo|()
+            }
+        }
+
+        when () {
+            (R|<local>/a| is R|B|).R|kotlin/Boolean.not|() || (R|<local>/a| is R|C|).R|kotlin/Boolean.not|() ->  {
+            }
+            else ->  {
+            }
+        }
+
+        when () {
+            (R|<local>/a| is R|B|).R|kotlin/Boolean.not|() || (R|<local>/a| is R|C|).R|kotlin/Boolean.not|() ->  {
+            }
+        }
+
+        when () {
+            (R|<local>/a| is R|B|).R|kotlin/Boolean.not|() ->  {
+                ^f13 Unit
+            }
+        }
+
+        R|<local>/a|.<Ambiguity: bar, [/B.bar, /C.bar]>#()
+    }
+    public final fun f14(a: R|A?|): R|kotlin/Unit| {
+        while((R|<local>/a| is R|B|).R|kotlin/Boolean.not|()) {
+        }
+
+        R|<local>/a|.<Unresolved name: bar>#()
+    }
+    public final fun f15(a: R|A?|): R|kotlin/Unit| {
+        do {
+        }
+        while((R|<local>/a| is R|B|).R|kotlin/Boolean.not|())
+        R|<local>/a|.<Unresolved name: bar>#()
+    }
+    public final fun getStringLength(obj: R|kotlin/Any|): R|kotlin/Char?| {
+        when () {
+            (R|<local>/obj| !is R|kotlin/String|) ->  {
+                ^getStringLength Null(null)
+            }
+        }
+
+        ^getStringLength R|<local>/obj|.R|kotlin/String.get|(Int(0))
+    }
+    public final fun toInt(i: R|kotlin/Int?|): R|kotlin/Int| {
+        ^toInt when () {
+            !=(R|<local>/i|, Null(null)) ->  {
+                R|<local>/i|
+            }
+            else ->  {
+                Int(0)
+            }
+        }
+
+    }
+    public final fun illegalWhenBody(a: R|kotlin/Any|): R|kotlin/Int| {
+        ^illegalWhenBody when (R|<local>/a|) {
+            ($subj$ is R|kotlin/Int|) ->  {
+                R|<local>/a|
+            }
+            ($subj$ is R|kotlin/String|) ->  {
+                R|<local>/a|
+            }
+            else ->  {
+                Int(1)
+            }
+        }
+
+    }
+    public final fun illegalWhenBlock(a: R|kotlin/Any|): R|kotlin/Int| {
+        when (R|<local>/a|) {
+            ($subj$ is R|kotlin/Int|) ->  {
+                ^illegalWhenBlock R|<local>/a|
+            }
+            ($subj$ is R|kotlin/String|) ->  {
+                ^illegalWhenBlock R|<local>/a|
+            }
+            else ->  {
+                ^illegalWhenBlock Int(1)
+            }
+        }
+
+    }
+    public final fun declarations(a: R|kotlin/Any?|): R|kotlin/Unit| {
+        when () {
+            (R|<local>/a| is R|kotlin/String|) ->  {
+                lval p4: R|kotlin/String| = R|<local>/a|
+            }
+        }
+
+        when () {
+            (R|<local>/a| is R|kotlin/String?|) ->  {
+                when () {
+                    !=(R|<local>/a|, Null(null)) ->  {
+                        lval s: R|kotlin/String| = R|<local>/a|
+                    }
+                }
+
+            }
+        }
+
+        when () {
+            !=(R|<local>/a|, Null(null)) ->  {
+                when () {
+                    (R|<local>/a| is R|kotlin/String?|) ->  {
+                        lval s: R|kotlin/String| = R|<local>/a|
+                    }
+                }
+
+            }
+        }
+
+    }
+    public final fun vars(a: R|kotlin/Any?|): R|kotlin/Unit| {
+        lvar b: R|kotlin/Int| = Int(0)
+        when () {
+            (R|<local>/a| is R|kotlin/Int|) ->  {
+                R|<local>/b| = R|<local>/a|
+            }
+        }
+
+    }
+    public final fun returnFunctionLiteralBlock(a: R|kotlin/Any?|): R|() -> kotlin/Int| {
+        when () {
+            (R|<local>/a| is R|kotlin/Int|) ->  {
+                ^returnFunctionLiteralBlock fun <implicit>.<anonymous>(): <implicit> {
+                    a#
+                }
+
+            }
+            else ->  {
+                ^returnFunctionLiteralBlock fun <implicit>.<anonymous>(): <implicit> {
+                    Int(1)
+                }
+
+            }
+        }
+
+    }
+    public final fun returnFunctionLiteral(a: R|kotlin/Any?|): R|() -> kotlin/Int| {
+        ^returnFunctionLiteral when () {
+            (R|<local>/a| is R|kotlin/Int|) ->  {
+                fun <anonymous>(): R|kotlin/Int| {
+                    ^ R|<local>/a|
+                }
+
+            }
+            else ->  {
+                fun <implicit>.<anonymous>(): <implicit> {
+                    Int(1)
+                }
+
+            }
+        }
+
+    }
+    public final fun mergeSmartCasts(a: R|kotlin/Any?|): R|kotlin/Unit| {
+        when () {
+            (R|<local>/a| is R|kotlin/String|) || (R|<local>/a| is R|kotlin/Int|) ->  {
+                R|<local>/a|.<Inapplicable(INAPPLICABLE): [kotlin/Comparable.compareTo]>#(String())
+                R|<local>/a|.R|kotlin/Any.toString|()
+            }
+        }
+
+        when () {
+            (R|<local>/a| is R|kotlin/Int|) || (R|<local>/a| is R|kotlin/String|) ->  {
+                R|<local>/a|.<Inapplicable(INAPPLICABLE): [kotlin/Comparable.compareTo]>#(String())
+            }
+        }
+
+        when (R|<local>/a|) {
+            ($subj$ is R|kotlin/String|) || ($subj$ is R|kotlin/Any|) ->  {
+                R|<local>/a|.<Unresolved name: compareTo>#(String())
+            }
+        }
+
+        when () {
+            (R|<local>/a| is R|kotlin/String|) && (R|<local>/a| is R|kotlin/Any|) ->  {
+                lval i: R|kotlin/Int| = R|<local>/a|.R|kotlin/String.compareTo|(String())
+            }
+        }
+
+        when () {
+            (R|<local>/a| is R|kotlin/String|) && ==(R|<local>/a|.R|kotlin/String.compareTo|(String()), Int(0)) ->  {
+            }
+        }
+
+        when () {
+            (R|<local>/a| is R|kotlin/String|) || ERROR_EXPR(Qualified expression without selector) ->  {
+                Int(0)
+            }
+        }
+
+        fun <anonymous>(): R|kotlin/Unit| {
+            Unit
+        }
+
+    }
+    public final fun f(): R|kotlin/String| {
+        lvar a: R|kotlin/Any| = Int(11)
+        when () {
+            (R|<local>/a| is R|kotlin/String|) ->  {
+                lval i: R|kotlin/String| = R|<local>/a|
+                R|<local>/a|.R|kotlin/String.compareTo|(String(f))
+                lval f: R|() -> kotlin/String| = fun <anonymous>(): R|it(kotlin/Int & kotlin/String)| {
+                    R|<local>/a| = Int(42)
+                    R|<local>/a|
+                }
+
+                ^f R|<local>/a|
+            }
+        }
+
+        ^f String()
+    }
+    public final class Mutable : R|kotlin/Any| {
+        public constructor(x: R|kotlin/String?|): R|Mutable| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final var x: R|kotlin/String?| = R|<local>/x|
+            public get(): R|kotlin/String?|
+            public set(value: R|kotlin/String?|): R|kotlin/Unit|
+
+        public final val xx: R|kotlin/String?|
+            public get(): R|kotlin/String?| {
+                ^ R|<local>/x|
+            }
+
+        public final fun foo(): R|kotlin/String| {
+            when () {
+                (this@R|/Mutable|.R|/Mutable.x| is R|kotlin/String|) ->  {
+                    ^foo this@R|/Mutable|.R|/Mutable.x|
+                }
+            }
+
+            when () {
+                !=(this@R|/Mutable|.R|/Mutable.x|, Null(null)) ->  {
+                    ^foo this@R|/Mutable|.R|/Mutable.x|
+                }
+            }
+
+            when () {
+                (this@R|/Mutable|.R|/Mutable.xx| is R|kotlin/String|) ->  {
+                    ^foo this@R|/Mutable|.R|/Mutable.xx|
+                }
+            }
+
+            ^foo String()
+        }
+
+        public final fun bar(other: R|Mutable|): R|kotlin/String| {
+            lvar y: R|Mutable| = R|<local>/other|
+            when () {
+                (R|<local>/y|.R|/Mutable.x| is R|kotlin/String|) ->  {
+                    ^bar R|<local>/y|.R|/Mutable.x|
+                }
+            }
+
+            ^bar String()
+        }
+
+    }
+    public final fun foo(aa: R|kotlin/Any|): R|kotlin/Int| {
+        lvar a: R|kotlin/Any| = R|<local>/aa|
+        when () {
+            (R|<local>/a| is R|kotlin/Int|) ->  {
+                ^foo R|<local>/a|
+            }
+        }
+
+        ^foo Int(1)
+    }
+    public final fun inForLoop(x: R|kotlin/Any?|): R|kotlin/Unit| {
+        when () {
+            (R|<local>/x| is R|kotlin/Array<*>|) ->  {
+                lval <range>: R|kotlin/Array<*>| = R|<local>/x|
+                lval <iterator>: R|kotlin/collections/Iterator<kotlin/Any?>| = R|<local>/<range>|.R|FakeOverride<kotlin/Array.iterator: R|kotlin/collections/Iterator<kotlin/Any?>|>|()
+                while(R|<local>/<iterator>|.R|kotlin/collections/Iterator.hasNext|()) {
+                    lval i: R|kotlin/Any?| = R|<local>/<iterator>|.R|FakeOverride<kotlin/collections/Iterator.next: R|kotlin/Any?|>|()
+                }
+
+            }
+        }
+
+        lval <range>: R|kotlin/Any?| = R|<local>/x|
+        lval <iterator>: <ERROR TYPE REF: Unresolved name: iterator> = R|<local>/<range>|.<Unresolved name: iterator>#()
+        while(R|<local>/<iterator>|.<Unresolved name: hasNext>#()) {
+            lval i: <ERROR TYPE REF: Unresolved name: next> = R|<local>/<iterator>|.<Unresolved name: next>#()
+        }
+
+    }
+    public final class ExplicitAccessorForAnnotation : R|kotlin/Any| {
+        public constructor(): R|ExplicitAccessorForAnnotation| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val tt: R|kotlin/String?| = String(good)
+            public get(): R|kotlin/String?|
+
+        public final fun foo(): R|kotlin/String| {
+            when () {
+                (this@R|/ExplicitAccessorForAnnotation|.R|/ExplicitAccessorForAnnotation.tt| is R|kotlin/String|) ->  {
+                    ^foo this@R|/ExplicitAccessorForAnnotation|.R|/ExplicitAccessorForAnnotation.tt|
+                }
+            }
+
+            ^foo String()
+        }
+
+    }

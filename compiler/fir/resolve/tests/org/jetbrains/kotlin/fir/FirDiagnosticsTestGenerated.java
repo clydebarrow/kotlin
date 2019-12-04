@@ -564,6 +564,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/simple.kt");
         }
 
+        @TestMetadata("smartCasts.kt")
+        public void testSmartCasts() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/smartCasts.kt");
+        }
+
         @TestMetadata("this.kt")
         public void testThis() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/this.kt");
