@@ -1002,6 +1002,11 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                                 runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-increment-expression/p-4/pos/1.1.kt");
                             }
 
+                            @TestMetadata("1.2.kt")
+                            public void test1_2() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-increment-expression/p-4/pos/1.2.kt");
+                            }
+
                             public void testAllFilesPresentInPos() throws Exception {
                                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-increment-expression/p-4/pos"), Pattern.compile("^(.+)\\.kt$"), true);
                             }

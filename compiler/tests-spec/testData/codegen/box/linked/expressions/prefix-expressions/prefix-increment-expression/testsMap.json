@@ -75,7 +75,13 @@
         {
           "specVersion": "0.1-213",
           "casesNumber": 0,
-          "description": "check for a prefix increment expression ++A expression A must be an assignable expression",
+          "description": "check for a prefix increment expression ++A expression A must be an assignable expression (a navigation expression referring to a mutable property)",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 0,
+          "description": "check for a prefix increment expression ++A expression A must be an assignable expression (an indexing expression)",
           "unexpectedBehaviour": false
         }
       ]
