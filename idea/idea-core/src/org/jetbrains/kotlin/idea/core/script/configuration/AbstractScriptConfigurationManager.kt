@@ -23,11 +23,11 @@ import kotlinx.coroutines.launch
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.core.script.*
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager.Companion.toVfsRoots
-import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationCache
-import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationCacheScope
-import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationSnapshot
-import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationState
+import org.jetbrains.kotlin.idea.core.script.configuration.cache.*
 import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptConfigurationUpdater
+import org.jetbrains.kotlin.idea.core.script.configuration.loader.DefaultScriptConfigurationLoader
+import org.jetbrains.kotlin.idea.core.script.configuration.loader.ScriptConfigurationLoader
+import org.jetbrains.kotlin.idea.core.script.configuration.loader.ScriptOutsiderFileConfigurationLoader
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsCache
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsIndexer
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.getKtFile

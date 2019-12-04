@@ -11,8 +11,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.core.script.IdeScriptReportSink
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.core.script.applySuggestedScriptConfiguration
-import org.jetbrains.kotlin.idea.core.script.configuration.DefaultScriptConfigurationManagerExtensions
-import org.jetbrains.kotlin.idea.core.script.configuration.loader.FileContentsDependentConfigurationLoader
+import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptInputsCalculator
 import org.jetbrains.kotlin.idea.core.script.configuration.testingBackgroundExecutor
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.testScriptConfigurationNotification
 import org.jetbrains.kotlin.idea.core.script.hasSuggestedScriptConfiguration
@@ -42,9 +41,9 @@ abstract class AbstractScriptConfigurationLoadingTest : AbstractScriptConfigurat
         testScriptConfigurationNotification = true
 
         addExtensionPointInTest(
-            DefaultScriptConfigurationManagerExtensions.LOADER,
-            project,
-            FileContentsDependentConfigurationLoader(project),
+            ScriptInputsCalculator.EP,
+            null,
+            TestScriptInputsCalculator(),
             testRootDisposable
         )
 

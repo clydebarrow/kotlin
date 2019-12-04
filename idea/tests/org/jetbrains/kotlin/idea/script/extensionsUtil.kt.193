@@ -11,7 +11,7 @@ import com.intellij.openapi.project.Project
 
 fun <T> addExtensionPointInTest(
     pointName: ExtensionPointName<T>,
-    project: Project,
+    project: Project?,
     provider: T,
     testRootDisposable: Disposable
 ) {

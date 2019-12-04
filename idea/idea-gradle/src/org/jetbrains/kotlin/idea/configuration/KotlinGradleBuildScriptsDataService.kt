@@ -23,9 +23,8 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.pom.Navigatable
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
-import org.jetbrains.kotlin.idea.core.script.configuration.cache.CachedConfigurationInputs
 import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationSnapshot
-import org.jetbrains.kotlin.idea.scripting.gradle.getGradleScriptInputsStamp
+import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptInputsCalculator
 import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
 import org.jetbrains.kotlin.scripting.resolve.VirtualFileScriptSource
@@ -70,7 +69,7 @@ class KotlinGradleBuildScriptsDataService : AbstractProjectDataService<GradleSou
             val virtualFile = VfsUtil.findFile(scriptFile.toPath(), true)!!
 
             // todo(KT-34440): take inputs snapshot before starting import
-            val inputs = getGradleScriptInputsStamp(project, virtualFile)
+            val inputs = ScriptInputsCalculator.calculateActual(project, virtualFile, null)
 
             val definition = virtualFile.findScriptDefinition(project) ?: return@forEach
 
@@ -86,7 +85,7 @@ class KotlinGradleBuildScriptsDataService : AbstractProjectDataService<GradleSou
                 Pair(
                     virtualFile,
                     ScriptConfigurationSnapshot(
-                        inputs ?: CachedConfigurationInputs.OutOfDate,
+                        inputs,
                         listOf(),
                         ScriptCompilationConfigurationWrapper.FromCompilationConfiguration(
                             VirtualFileScriptSource(virtualFile),

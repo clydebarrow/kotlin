@@ -58,31 +58,54 @@ data class ScriptConfigurationSnapshot(
 interface CachedConfigurationInputs {
     fun isUpToDate(project: Project, file: VirtualFile, ktFile: KtFile? = null): Boolean
 
+    var stamp: Long
+
     object OutOfDate : CachedConfigurationInputs {
         override fun isUpToDate(project: Project, file: VirtualFile, ktFile: KtFile?): Boolean = false
+        override var stamp: Long
+            get() = Long.MIN_VALUE
+            set(value) {}
     }
 
-    data class PsiModificationStamp(
-        val fileModificationStamp: Long,
-        val psiModificationStamp: Long
-    ) : CachedConfigurationInputs {
+    class PsiModificationStamp(override var stamp: Long) : CachedConfigurationInputs {
         override fun isUpToDate(project: Project, file: VirtualFile, ktFile: KtFile?): Boolean =
             get(project, file, ktFile) == this
+
+        override fun equals(other: Any?): Boolean {
+            return super.equals(other) || this.stamp == (other as? PsiModificationStamp)?.stamp
+        }
+
+        override fun hashCode(): Int {
+            return stamp.toInt()
+        }
+
+        override fun toString(): String {
+            return "Psi(modificationStamp=$stamp)"
+        }
 
         companion object {
             fun get(project: Project, file: VirtualFile, ktFile: KtFile?): PsiModificationStamp {
                 val actualKtFile = project.getKtFile(file, ktFile)
-                return PsiModificationStamp(
-                    file.modificationStamp,
-                    actualKtFile?.modificationStamp ?: 0
-                )
+                return PsiModificationStamp(file.modificationStamp + (actualKtFile?.modificationStamp ?: 0))
             }
         }
     }
 
-    data class SourceContentsStamp(val source: String) : CachedConfigurationInputs {
+    class SourceContentsStamp(override var stamp: Long) : CachedConfigurationInputs {
         override fun isUpToDate(project: Project, file: VirtualFile, ktFile: KtFile?): Boolean =
             get(project, file, ktFile) == this
+
+        override fun equals(other: Any?): Boolean {
+            return super.equals(other) || this.stamp == (other as? SourceContentsStamp)?.stamp
+        }
+
+        override fun hashCode(): Int {
+            return stamp.hashCode()
+        }
+
+        override fun toString(): String {
+            return "Text(contentHashCode=$stamp)"
+        }
 
         companion object {
             fun get(project: Project, file: VirtualFile, ktFile: KtFile?): SourceContentsStamp {
@@ -90,7 +113,7 @@ interface CachedConfigurationInputs {
                     FileDocumentManager.getInstance().getDocument(file)!!.text
                 }
 
-                return SourceContentsStamp(text)
+                return SourceContentsStamp(text.hashCode().toLong())
             }
         }
     }

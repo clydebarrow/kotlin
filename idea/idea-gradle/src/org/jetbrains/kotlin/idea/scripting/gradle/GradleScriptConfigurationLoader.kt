@@ -7,10 +7,8 @@ package org.jetbrains.kotlin.idea.scripting.gradle
 
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VirtualFile
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import org.jetbrains.kotlin.idea.core.script.configuration.cache.CachedConfigurationInputs
 import org.jetbrains.kotlin.idea.core.script.configuration.loader.DefaultScriptConfigurationLoader
 import org.jetbrains.kotlin.idea.core.script.configuration.loader.ScriptConfigurationLoadingContext
 import org.jetbrains.kotlin.idea.core.util.EDT
@@ -47,10 +45,5 @@ class GradleScriptConfigurationLoader(project: Project) : DefaultScriptConfigura
 
             return super.loadDependencies(isFirstLoad, ktFile, scriptDefinition, context)
         }
-    }
-
-    override fun getInputsStamp(virtualFile: VirtualFile, file: KtFile): CachedConfigurationInputs {
-        return getGradleScriptInputsStamp(project, virtualFile, file)
-            ?: super.getInputsStamp(virtualFile, file)
     }
 }

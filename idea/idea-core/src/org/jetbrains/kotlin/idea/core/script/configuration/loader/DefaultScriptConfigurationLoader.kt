@@ -7,9 +7,8 @@ package org.jetbrains.kotlin.idea.core.script.configuration.loader
 
 import com.intellij.openapi.diagnostic.ControlFlowException
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.idea.core.script.configuration.cache.CachedConfigurationInputs
 import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationSnapshot
+import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptInputsCalculator
 import org.jetbrains.kotlin.idea.core.script.debug
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
@@ -40,7 +39,7 @@ open class DefaultScriptConfigurationLoader(val project: Project) : ScriptConfig
 
         debug(ktFile) { "start dependencies loading" }
 
-        val inputs = getInputsStamp(virtualFile, ktFile)
+        val inputs = ScriptInputsCalculator.calculateActual(project, virtualFile, ktFile)
         val scriptingApiResult = try {
             refineScriptCompilationConfiguration(
                 KtFileScriptSource(ktFile), scriptDefinition, ktFile.project
@@ -62,9 +61,5 @@ open class DefaultScriptConfigurationLoader(val project: Project) : ScriptConfig
         debug(ktFile) { "finish dependencies loading" }
 
         return true
-    }
-
-    protected open fun getInputsStamp(virtualFile: VirtualFile, file: KtFile): CachedConfigurationInputs {
-        return CachedConfigurationInputs.PsiModificationStamp.get(project, virtualFile, file)
     }
 }

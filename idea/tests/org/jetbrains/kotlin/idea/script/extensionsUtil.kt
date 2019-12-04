@@ -13,7 +13,7 @@ import com.intellij.testFramework.PlatformTestUtil
 
 fun <T> addExtensionPointInTest(
     pointName: ExtensionPointName<T>,
-    project: Project,
+    project: Project?,
     provider: T,
     testRootDisposable: Disposable
 ) {
