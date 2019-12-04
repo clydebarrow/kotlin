@@ -104,17 +104,18 @@ fun KtClassOrObject.getOrBuildFir(
 
 fun KtFile.getOrBuildFir(
     state: FirResolveState,
-    phase: FirResolvePhase = FirResolvePhase.DECLARATIONS
+    phase: FirResolvePhase = FirResolvePhase.DECLARATIONS,
+    lazyMode: Boolean = true
 ): FirFile {
     val session = state.getSession(this)
     val firProvider = FirProvider.getInstance(session) as IdeFirProvider
     val firFile = firProvider.getOrBuildFile(this)
-    firFile.runResolve(firFile, firProvider, phase, state)
+    firFile.runResolve(firFile, firProvider, phase, state, lazyMode)
     return firFile
 }
 
 fun KtFile.getOrBuildFirWithDiagnostics(state: FirResolveState): FirFile {
-    val firFile = getOrBuildFir(state, FirResolvePhase.BODY_RESOLVE)
+    val firFile = getOrBuildFir(state, FirResolvePhase.BODY_RESOLVE, lazyMode = false)
     if (state.hasDiagnosticsForFile(this)) return firFile
 
     val coneDiagnostics = FirDiagnosticsCollector.DEFAULT.collectDiagnostics(firFile)
@@ -126,12 +127,13 @@ private fun FirDeclaration.runResolve(
     file: FirFile,
     firProvider: IdeFirProvider,
     toPhase: FirResolvePhase,
-    state: FirResolveState
+    state: FirResolveState,
+    lazyMode: Boolean = true
 ) {
-    val nonLazyPhase = minOf(toPhase, FirResolvePhase.DECLARATIONS)
+    val nonLazyPhase = if (lazyMode) minOf(toPhase, FirResolvePhase.DECLARATIONS) else toPhase
     file.runResolve(toPhase = nonLazyPhase, fromPhase = this.resolvePhase)
     if (toPhase > nonLazyPhase) {
-        val designation = mutableListOf<FirElement>()
+        val designation = mutableListOf<FirDeclaration>()
         designation += file
         if (this !is FirFile) {
             val id = when (this) {
@@ -150,6 +152,9 @@ private fun FirDeclaration.runResolve(
             if (this is FirCallableDeclaration<*>) {
                 designation += this
             }
+        }
+        if (designation.all { it.resolvePhase >= toPhase }) {
+            return
         }
         val transformer = FirDesignatedBodyResolveTransformer(
             designation.iterator(), state.getSession(psi as KtElement),
