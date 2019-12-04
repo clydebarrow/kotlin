@@ -1,0 +1,9 @@
+FILE: operatorCall.kt
+    public final fun call(): R|kotlin/Unit| {
+        lval list: R|kotlin/String?| = String(sdfknsdkfm)
+        R|<local>/list|.<Inapplicable(WRONG_RECEIVER): [/contains]>#(String(x))
+        R|<local>/list|.<Inapplicable(WRONG_RECEIVER): [/contains]>#(String(x)).<Unresolved name: not>#()
+    }
+    public final operator fun R|kotlin/CharSequence|.contains(other: R|kotlin/CharSequence|, ignoreCase: R|kotlin/Boolean| = Boolean(false)): R|kotlin/Boolean| {
+        ^contains Boolean(true)
+    }

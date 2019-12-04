@@ -143,6 +143,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         runTest("compiler/fir/resolve/testData/resolve/stdlib/nullableTypeParameter.kt");
     }
 
+    @TestMetadata("operatorCall.kt")
+    public void testOperatorCall() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/stdlib/operatorCall.kt");
+    }
+
     @TestMetadata("problems.kt")
     public void testProblems() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/stdlib/problems.kt");
