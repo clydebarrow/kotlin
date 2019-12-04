@@ -25,7 +25,7 @@ public class DiagnosticsTestSpecGenerated extends AbstractDiagnosticsTestSpec {
     }
 
     public void testAllFilesPresentInDiagnostics() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics"), Pattern.compile("^(.+)\\.kt$"), true, "helpers", "linked/type-inference", "linked/type-system/type-kinds/type-parameters", "linked/type-system/subtyping", "linked/declarations/classifier-declaration/classifier-initialization", "linked/declarations/function-declaration", "linked/annotations", "linked/expressions/function-literals", "linked/expressions/conditional-expression", "linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1/p-1/neg", "linked/overload-resolution", "linked/control--and-data-flow-analysis");
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics"), Pattern.compile("^(.+)\\.kt$"), true, "helpers", "linked/type-inference", "linked/type-system/type-kinds/type-parameters", "linked/type-system/subtyping", "linked/declarations/classifier-declaration/classifier-initialization", "linked/declarations/function-declaration", "linked/annotations", "linked/inheritance", "linked/expressions/function-literals", "linked/expressions/conditional-expression", "linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1/p-1/neg", "linked/overload-resolution", "linked/control--and-data-flow-analysis");
     }
 
     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked")
@@ -37,7 +37,7 @@ public class DiagnosticsTestSpecGenerated extends AbstractDiagnosticsTestSpec {
         }
 
         public void testAllFilesPresentInLinked() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked"), Pattern.compile("^(.+)\\.kt$"), true, "type-inference", "type-system/type-kinds/type-parameters", "type-system/subtyping", "declarations/classifier-declaration/classifier-initialization", "declarations/function-declaration", "annotations", "expressions/function-literals", "expressions/conditional-expression", "expressions/built-in-types-and-their-semantics/kotlin.nothing-1/p-1/neg", "overload-resolution", "control--and-data-flow-analysis");
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked"), Pattern.compile("^(.+)\\.kt$"), true, "type-inference", "type-system/type-kinds/type-parameters", "type-system/subtyping", "declarations/classifier-declaration/classifier-initialization", "declarations/function-declaration", "annotations", "inheritance", "expressions/function-literals", "expressions/conditional-expression", "expressions/built-in-types-and-their-semantics/kotlin.nothing-1/p-1/neg", "overload-resolution", "control--and-data-flow-analysis");
         }
 
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/declarations")

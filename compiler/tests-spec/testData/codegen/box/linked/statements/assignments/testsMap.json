@@ -1,0 +1,15 @@
+{
+  "3": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 0,
+          "description": "check for a prefix increment expression ++A expression A must be an assignable expression",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-increment-expression/p-4/pos/1.1.kt",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  }
+}
