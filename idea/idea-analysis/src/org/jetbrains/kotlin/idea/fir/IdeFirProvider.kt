@@ -89,12 +89,12 @@ class IdeFirProvider(
     }
 
     override fun getFirClassifierContainerFileIfAny(symbol: FirClassLikeSymbol<*>): FirFile? {
-        val psi = symbol.fir.source?.psi ?: return null
+        val psi = symbol.fir.source?.psi
         if (psi is KtClassOrObject && psi.isLocal) {
             val ktFile = psi.containingKtFile
             return getOrBuildFile(ktFile)
         }
-        return getFirClassifierContainerFile(symbol.classId)
+        return getFirClassifierContainerFileIfAny(symbol.classId)
     }
 
     override fun getFirCallableContainerFile(symbol: FirCallableSymbol<*>): FirFile? {
