@@ -17,8 +17,10 @@ import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.isLibraryClasses
 import org.jetbrains.kotlin.idea.caches.resolve.IDEPackagePartProvider
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.utils.addToStdlib.cast
+import java.util.*
 
 private fun createLibrarySession(moduleInfo: IdeaModuleInfo, project: Project, provider: FirProjectSessionProvider): FirLibrarySession {
     val contentScope = moduleInfo.contentScope()
@@ -61,10 +63,20 @@ class FirResolveStateImpl(override val sessionProvider: FirSessionProvider) : Fi
 object FirIdeResolveFactory {
     private val stateCache = mutableMapOf<IdeaModuleInfo, FirResolveState>()
 
+    private val lightTestStateCache = IdentityHashMap<IdeaModuleInfo, FirResolveState>()
+
+    private val lightTestCaseName = Name.special("<light_idea_test_case>")
+
     fun initiate(psi: KtElement): FirResolveState {
-        return stateCache.getOrPut(psi.getModuleInfo()) {
+        val moduleInfo = psi.getModuleInfo()
+        val resolveStateCalculator = { ->
             val provider = FirProjectSessionProvider(psi.project)
             FirResolveStateImpl(provider)
+        }
+        return if (moduleInfo.stableName == lightTestCaseName) {
+            lightTestStateCache.getOrPut(moduleInfo, resolveStateCalculator)
+        } else {
+            stateCache.getOrPut(moduleInfo, resolveStateCalculator)
         }
     }
 }
