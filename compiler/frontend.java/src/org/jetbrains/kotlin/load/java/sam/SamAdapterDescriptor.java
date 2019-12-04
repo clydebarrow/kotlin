@@ -22,4 +22,8 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
 
 public interface SamAdapterDescriptor<D extends FunctionDescriptor> extends FunctionDescriptor, JavaCallableMemberDescriptor,
                                                                             SyntheticMemberDescriptor<D> {
+    @Override
+    default boolean isSamDescriptor() {
+        return true;
+    }
 }

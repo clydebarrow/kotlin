@@ -1174,6 +1174,20 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/addSpreadOperatorForArrayAsVarargAfterSam")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class AddSpreadOperatorForArrayAsVarargAfterSam extends AbstractQuickFixTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        @TestMetadata("withoutWarning.kt")
+        public void testWithoutWarning() throws Exception {
+            runTest("idea/testData/quickfix/addSpreadOperatorForArrayAsVarargAfterSam/withoutWarning.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/addStarProjections")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

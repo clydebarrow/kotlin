@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.resolve.calls.components
 
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
+import org.jetbrains.kotlin.descriptors.synthetic.SyntheticMemberDescriptor
 import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
@@ -45,6 +47,7 @@ class KotlinCallCompleter(
 
         candidate.addExpectedTypeConstraint(returnType, expectedType)
         candidate.addExpectedTypeFromCastConstraint(returnType, resolutionCallbacks)
+        candidate.checkSamWithVararg(diagnosticHolder)
 
         return if (resolutionCallbacks.inferenceSession.shouldRunCompletion(candidate))
             candidate.runCompletion(
@@ -54,6 +57,22 @@ class KotlinCallCompleter(
             )
         else
             candidate.asCallResolutionResult(ConstraintSystemCompletionMode.PARTIAL, diagnosticHolder)
+    }
+
+    private fun KotlinResolutionCandidate.checkSamWithVararg(diagnosticHolder: KotlinDiagnosticsHolder.SimpleHolder) {
+        val samConversionPerArgumentIsInWarningMode =
+            callComponents.languageVersionSettings.supportsFeature(LanguageFeature.SamConversionPerArgument) &&
+                    !callComponents.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitVarargAsArrayAfterSamArgument)
+
+        if (samConversionPerArgumentIsInWarningMode && (resolvedCall.candidateDescriptor as? SyntheticMemberDescriptor<*>)?.isSamDescriptor() == true) {
+            val declarationDescriptor = resolvedCall.candidateDescriptor.baseDescriptorForSynthetic
+
+            if (declarationDescriptor is SimpleFunctionDescriptor && declarationDescriptor.valueParameters.size > 0 && declarationDescriptor.valueParameters.last().isVararg) {
+                diagnosticHolder.addDiagnostic(
+                    ResolvedToSamWithVarargDiagnostic(resolvedCall.atom.argumentsInParenthesis.last())
+                )
+            }
+        }
     }
 
     fun createAllCandidatesResult(

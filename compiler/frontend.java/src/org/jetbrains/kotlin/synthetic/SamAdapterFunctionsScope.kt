@@ -49,6 +49,9 @@ import kotlin.properties.Delegates
 
 interface SamAdapterExtensionFunctionDescriptor : FunctionDescriptor, SyntheticMemberDescriptor<FunctionDescriptor> {
     override val baseDescriptorForSynthetic: FunctionDescriptor
+
+    @JvmDefault
+    override fun isSamDescriptor() = true
 }
 
 val SAM_LOOKUP_NAME = Name.special("<SAM-CONSTRUCTOR>")

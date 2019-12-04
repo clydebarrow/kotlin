@@ -20,4 +20,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 
 interface SyntheticMemberDescriptor<out T : DeclarationDescriptor> {
     val baseDescriptorForSynthetic: T
+
+    @JvmDefault
+    fun isSamDescriptor() = false
 }

@@ -24,7 +24,10 @@ import org.jetbrains.kotlin.descriptors.synthetic.SyntheticMemberDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
 
-interface SamConstructorDescriptor : SimpleFunctionDescriptor, SyntheticMemberDescriptor<JavaClassDescriptor>
+interface SamConstructorDescriptor : SimpleFunctionDescriptor, SyntheticMemberDescriptor<JavaClassDescriptor> {
+    @JvmDefault
+    override fun isSamDescriptor() = true
+}
 
 class SamConstructorDescriptorImpl(
         containingDeclaration: DeclarationDescriptor,
