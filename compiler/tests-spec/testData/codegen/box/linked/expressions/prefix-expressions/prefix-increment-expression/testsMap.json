@@ -47,6 +47,12 @@
           "description": "",
           "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-increment-expression/p-1/pos/1.1.kt",
           "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 0,
+          "description": "check the result of inc() is assigned to A, the return type of inc must be a subtype of A.",
+          "unexpectedBehaviour": false
         }
       ]
     }
