@@ -87,8 +87,7 @@ class FirCallResolver(
             typeArguments,
             session,
             file,
-            transformer.components.implicitReceiverStack,
-            transformer.components.container
+            transformer.components.implicitReceiverStack
         ) { it.resultType }
         towerResolver.reset()
 
@@ -150,8 +149,7 @@ class FirCallResolver(
             emptyList(),
             session,
             file,
-            transformer.components.implicitReceiverStack,
-            transformer.components.container
+            transformer.components.implicitReceiverStack
         ) { it.resultType }
         towerResolver.reset()
 
@@ -331,7 +329,6 @@ class FirCallResolver(
             session,
             file,
             transformer.components.implicitReceiverStack,
-            transformer.components.container,
             expectedType,
             outerConstraintSystemBuilder,
             lhs

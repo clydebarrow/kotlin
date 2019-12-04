@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
@@ -37,7 +35,6 @@ class CallInfo(
     val session: FirSession,
     val containingFile: FirFile,
     val implicitReceiverStack: ImplicitReceiverStack,
-    val containingDeclaration: FirDeclaration,
 
     // Three properties for callable references only
     val expectedType: ConeKotlinType? = null,
