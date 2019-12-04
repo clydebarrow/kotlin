@@ -550,6 +550,26 @@ class KotlinInjectionTest : AbstractInjectionTest() {
                                             """)
     }
 
+    fun testInjectionInJavaAnnotationWithNamedParamArray() {
+        myFixture.addClass("""
+                            package myinjection;
+
+                            @interface InHtml {
+                            String[] htmls();
+                            }
+                            """)
+        doAnnotationInjectionTest(
+                injectedLanguage = HTMLLanguage.INSTANCE.id,
+                pattern = """psiMethod().withName("htmls").withParameters().definedInClass("myinjection.InHtml")""",
+                kotlinCode = """
+                                            import myinjection.InHtml
+
+                                            @InHtml(htmls = ["<br/>", "<htm<caret>l></html>"])
+                                            fun foo() {
+                                            }
+                                            """)
+    }
+
     fun testInjectionInJavaNestedAnnotation() {
         myFixture.addClass(
             """

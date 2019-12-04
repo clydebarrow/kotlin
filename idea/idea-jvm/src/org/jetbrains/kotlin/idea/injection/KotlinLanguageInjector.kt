@@ -293,7 +293,11 @@ class KotlinLanguageInjector(
     }
 
     private fun injectInAnnotationCall(host: KtElement): InjectionInfo? {
-        val argument = host.parent as? KtValueArgument ?: return null
+        val argument = when (val parent = host.parent) {
+            is KtValueArgument -> parent
+            is KtCollectionLiteralExpression, is KtCallElement -> parent.parent as? KtValueArgument ?: return null
+            else -> return null
+        }
         val annotationEntry = argument.parent.parent as? KtCallElement ?: return null
         if (!fastCheckInjectionsExists(annotationEntry)) return null
         val calleeExpression = annotationEntry.calleeExpression ?: return null
