@@ -18,10 +18,11 @@ import com.intellij.openapi.project.ex.ProjectManagerEx
 import com.intellij.openapi.startup.StartupManager
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.impl.PsiDocumentManagerBase
-import com.intellij.testFramework.PlatformTestUtil
+import com.intellij.testFramework.ExtensionTestUtil
 import com.intellij.testFramework.runInEdtAndWait
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.idea.parameterInfo.HintType
+import java.nio.file.Paths
 
 fun commitAllDocuments() {
     val fileDocumentManager = FileDocumentManager.getInstance()
@@ -64,7 +65,7 @@ fun dispatchAllInvocationEvents() {
 }
 
 fun loadProjectWithName(path: String, name: String): Project? =
-    ProjectManagerEx.getInstanceEx().loadProject(name, path)
+    ProjectManagerEx.getInstanceEx().loadProject(Paths.get(path), name)
 
 fun closeProject(project: Project) {
     dispatchAllInvocationEvents()
@@ -74,7 +75,7 @@ fun closeProject(project: Project) {
 
 fun runStartupActivities(project: Project) {
     with(StartupManager.getInstance(project) as StartupManagerImpl) {
-        scheduleInitialVfsRefresh()
+        //scheduleInitialVfsRefresh()
         runStartupActivities()
         runPostStartupActivities()
     }
@@ -85,7 +86,7 @@ fun waitForAllEditorsFinallyLoaded(project: Project) {
 }
 
 fun replaceWithCustomHighlighter(parentDisposable: Disposable, fromImplementationClass: String, toImplementationClass: String) {
-    val pointName = ExtensionPointName.create<LanguageExtensionPoint<Annotator>>(LanguageAnnotators.EP_NAME)
+    val pointName = ExtensionPointName.create<LanguageExtensionPoint<Annotator>>(LanguageAnnotators.EP_NAME.name)
     val extensionPoint = pointName.getPoint(null)
 
     val point = LanguageExtensionPoint<Annotator>()
@@ -98,7 +99,7 @@ fun replaceWithCustomHighlighter(parentDisposable: Disposable, fromImplementatio
             .toList()
     // custom highlighter is already registered if filteredExtensions has the same size as extensions
     if (filteredExtensions.size < extensions.size) {
-        PlatformTestUtil.maskExtensions(pointName, filteredExtensions + listOf(point), parentDisposable)
+        ExtensionTestUtil.maskExtensions(pointName, filteredExtensions + listOf(point), parentDisposable)
     }
 }
 
